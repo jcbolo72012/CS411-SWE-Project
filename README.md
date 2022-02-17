@@ -1,7 +1,7 @@
 # CS411-SWE-Project
 CS411 SWE Project
 
-<b>Our Team<\b>
+<strong>Our Team</strong>
 <br>
 Yi, Jae Hyo <br>
 Bolognino, John,C <br>
