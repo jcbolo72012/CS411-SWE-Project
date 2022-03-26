@@ -1,5 +1,7 @@
 ##CS 411 User Stories Ideation
 
+
+
 #User Story 1: Login/Logout for personalized account synced with instacart
 
 Summary: The user must log in through an Instacart account. The home page will be the login page, which will let users be able to enter their information using their Instacart account.
