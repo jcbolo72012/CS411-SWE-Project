@@ -1,23 +1,10 @@
 from django.http import HttpResponse
 import requests
 import typing 
+import os
 
-""" 
-Documentation:  https://spoonacular.com/food-api/docs#Search-Recipes-Complex
-Example URLs
-example_url = "https://api.spoonacular.com/recipes/complexSearch?query=pasta&apiKey=f257b3dedd0d40b988e13df0754bc639&maxFat=25&number=2"
-spoonacluar_url =  "https://api.spoonacular.com/recipes/complexSearch?apiKey = f257b3dedd0d40b988e13df0754bc639&query ="
-search_url = "https://api.spoonacular.com/food/products/search?query=pasta&apiKey=f257b3dedd0d40b988e13df0754bc639"
-"""
-
-api_Key = "f257b3dedd0d40b988e13df0754bc639"
 def_complex_search_url = "https://api.spoonacular.com/recipes/complexSearch"
-
-#https://api.spoonacular.com/recipes/complexSearch?query=pasta&api_Key=f257b3dedd0d40b988e13df0754bc639
-#Example for specific recipe
-#spoonacluar_url =  "https://api.spoonacular.com/recipes/716429/information?apiKey=f257b3dedd0d40b988e13df0754bc639&includeNutrition=true"
-#example_url = "https://api.spoonacular.com/recipes/complexSearch?query=pasta&apiKey=f257b3dedd0d40b988e13df0754bc639&maxFat=25&number=2"
-#r = requests.get(spoonacluar_url+query)
+api_key = os.environ.get("spoonacular_api_key")
 
 def parse_paramls(param_ls: list = None) -> str:
     """
