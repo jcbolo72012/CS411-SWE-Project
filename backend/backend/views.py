@@ -58,8 +58,7 @@ def spooncular_function(functionality: str, query: str, paramls: list = None) ->
     return 1
 
 def search(request, recipe_query, page_num = 1):
-    """ Pass the API to search here! """
-    pass
+    
 
 #For Recipe: Complex Search
 query_example_1 = "pasta"
