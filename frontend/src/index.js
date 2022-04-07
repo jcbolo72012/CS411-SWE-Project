@@ -3,10 +3,19 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import {QueryClient, QueryClientProvider} from "react-query";
+import {createTheme} from "@mui/material";
+
+const client = new QueryClient();
+const theme = createTheme({
+  spacing: (factor) => `${0.25 * factor}rem`, // (Bootstrap strategy)
+});
 
 ReactDOM.render(
   <React.StrictMode>
+  <QueryClientProvider client={client}>
     <App />
+  </QueryClientProvider>
   </React.StrictMode>,
   document.getElementById('root')
 );
