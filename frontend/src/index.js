@@ -5,11 +5,9 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import {QueryClient, QueryClientProvider} from "react-query";
 import {createTheme} from "@mui/material";
+import {ReactQueryDevtoolsPanel} from "react-query/devtools";
 
 const client = new QueryClient();
-const theme = createTheme({
-  spacing: (factor) => `${0.25 * factor}rem`, // (Bootstrap strategy)
-});
 
 ReactDOM.render(
   <React.StrictMode>

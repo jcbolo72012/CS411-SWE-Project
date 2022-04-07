@@ -1,5 +1,5 @@
 import './App.css';
-import {Component, useEffect, useState} from "react";
+import {Component, useState} from "react";
 import {useQuery, useQueryClient} from "react-query";
 import {Box, Button, TextField} from "@mui/material";
 
@@ -35,12 +35,16 @@ class App extends Component {
     }
 }
 
+// TODO: convert function to Component
+// TODO: prevent re-rendering on every type
 function Recipe(props){
 
     const client = useQueryClient()
-    const [message, setMessage] = useState();
-    const { isLoading, isError, data, error } = useQuery('searchRecipes', async () => {
-        const response = await fetch("http://localhost:8000/search/" + props.query)
+    const [query, setQuery] = useState();
+
+    const { isLoading, isError, data, error } = useQuery(['searchRecipes', props.query], async () => {
+        setQuery(props.query)
+        const response = await fetch("http://localhost:8000/search/" + query)
                if (!response.ok) {
                    throw new Error('Network response was not ok')
                }
@@ -48,33 +52,31 @@ function Recipe(props){
             }
         )
 
-    useEffect(() => {
+    if (query && query.length < 3){
+        return null;
+    }
 
-        if(props.query.length < 3) {
-            setMessage(null);
-        } if(data && data.results) {
-            console.log(data)
-            setMessage(
-                <div>
-                {data.results.map ((recipe, index) => (
-                    <div>
-                        <Box sx={{ border: 1, display: "flex", justifyContent: "space-between", mx:"auto"}}>
-                            <h2>{recipe.title}</h2>
-                            <img src={recipe.image}/>
-                            <text>Calories: {recipe.calories} cal</text>
-                        </Box>
-                    </div>
-                ))}
-                </div>)
-        }
-    }, [props.query, data])
+    console.log(data)
 
     if(isLoading) {
         return <div><h3>Loading...</h3></div>
     } if (isError) {
         return <div><h3>Error! {error}</h3></div>
-    } return (
-        <div> {message} </div>);
+    } if(data && data.results) {
+        console.log(data)
+        return(
+            <div>
+            {data.results.map ((recipe, index) => (
+                <div>
+                    <Box sx={{ border: 1, display: "flex", mx:"auto"}}>
+                        <h2>{recipe.title}</h2><br/>
+                        Recipe ID: {recipe.id}<br/>
+                        <img src={recipe.image}/>
+                    </Box>
+                </div>
+            ))}
+            </div>)
+    }
 }
 
 export default App;
