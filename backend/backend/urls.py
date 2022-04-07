@@ -20,6 +20,7 @@ from . import views
 
 urlpatterns = [
     path('', views.ping),
+    path('search/', views.ping ),
     path('search/<slug:recipe_query>', views.search),
     path('search/<slug:recipe_query>/<int:page_num>', views.search)
 ]

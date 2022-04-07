@@ -37,6 +37,7 @@ def complex_search(query: str, paramls: list = None):
     # print("The following are the results from the complex search: \n\n")
 
     # print(content["results"])
+    # print(api_Key)
 
     return content
 
@@ -62,7 +63,6 @@ def spooncular_function(functionality: str, query: str, paramls: list = None) ->
     # print(content["results"])
 
     return 1
-
 
 def search(request, recipe_query, page_num=1):
     return JsonResponse(complex_search(recipe_query, []))
