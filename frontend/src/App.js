@@ -37,25 +37,25 @@ class App extends Component {
 
 // TODO: convert function to Component
 // TODO: prevent re-rendering on every type
-function Recipe(props){
+function Recipe({query, setQuery}){
 
     const client = useQueryClient()
-    const [query, setQuery] = useState();
+    // const [query, setQuery] = useState();
 
-    const { isLoading, isError, data, error } = useQuery(['searchRecipes', props.query], async () => {
-        setQuery(props.query)
+    const { isLoading, isError, data, error } = useQuery(['searchRecipes', query], async () => {
         const response = await fetch("http://localhost:8000/search/" + query)
                if (!response.ok) {
                    throw new Error('Network response was not ok')
                }
                return response.json()
-            }
+            }, {refetchOnWindowFocus: false}
         )
 
     if (query && query.length < 3){
         return null;
     }
 
+    console.log(query)
     console.log(data)
 
     if(isLoading) {

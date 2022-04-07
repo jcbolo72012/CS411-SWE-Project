@@ -65,7 +65,9 @@ def spooncular_function(functionality: str, query: str, paramls: list = None) ->
     return 1
 
 def search(request, recipe_query, page_num=1):
-    return JsonResponse(complex_search(recipe_query, []))
+    if recipe_query != "undefined":
+        return JsonResponse(complex_search(recipe_query, []))
+    return ping(request)
 
 
 # For Recipe: Complex Search
