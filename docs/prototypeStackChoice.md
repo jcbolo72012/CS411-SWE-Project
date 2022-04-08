@@ -15,7 +15,9 @@
 * We may use MySQL, which is compatible with Django.
 * Moreover, we are more familiar with Python than Javascript, and Django is a Python-based framework compared to Node.js which is JavaScript based. 
 
-WE ARE MISSING SELETCTION FOR FRONTEND
+* We chose React over Angular because of the former's overall greater efficiency, view library, simple API, and lightweight components. 
+Notice that Angular has a steeper learning curve than React and due to short time frame and simplicity of React, we favored React. 
+* Additionally, React is more suitable for component based UI, which helps modularize the application, and has greater flexiblility in building blocks. 
 
 * Overall, our team interlaces communication between front-end and back-end to develop a seamless web app. 
 
