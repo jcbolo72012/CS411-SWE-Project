@@ -23,7 +23,7 @@ class App extends Component {
         return (
           <div class="App">
               <form onSubmit={this.onSubmit}>
-                  <Box sx={{border: 1 }} autocomplete="off">
+                  <Box sx={{border: 1, mx: 10, p: 5}} autocomplete="off">
                           <TextField id="outlined-basic" sx={{ input: {color: 'white'}}}
                                      InputLabelProps={{ style: {color: 'white'}}}
                                      name="query" label="Search for Recipes..." variant="outlined"
@@ -70,7 +70,7 @@ function Recipe({query, setQuery}){
             <div>
             {data.results.map ((recipe, index) => (
                 <div>
-                    <Box sx={{ border: 1, display: "flex", mx:"auto"}}>
+                    <Box sx={{ border: 1, display: "flex", mx: 10, p: 1}}>
                         <h2>{recipe.title}</h2><br/>
                         Recipe ID: {recipe.id}<br/>
                         <img src={recipe.image}/>
