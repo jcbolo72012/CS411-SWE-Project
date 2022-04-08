@@ -24,7 +24,9 @@ class App extends Component {
           <div class="App">
               <form onSubmit={this.onSubmit}>
                   <Box sx={{border: 1 }} autocomplete="off">
-                          <TextField id="outlined-basic" name="query" label="Search for Recipes..." variant="outlined"
+                          <TextField id="outlined-basic" sx={{ input: {color: 'white'}}}
+                                     InputLabelProps={{ style: {color: 'white'}}}
+                                     name="query" label="Search for Recipes..." variant="outlined"
                                      value={this.state.query} onChange={this.onChange}/>
                           <Button variant="contained" type="submit">Search</Button>
                   </Box>
