@@ -57,8 +57,8 @@ function Recipe({query, setQuery}){
         return null;
     }
 
-    console.log(query)
-    console.log(data)
+    // console.log(query)
+    // console.log(data)
 
     if(isLoading) {
         return <div><h3>Loading...</h3></div>
