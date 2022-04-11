@@ -19,6 +19,8 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('search/<string:recipe_query>', views.search)
-    path('search/<string:recipe_query>/<int:page_num>', views.search)
+    path('', views.ping),
+    path('search/', views.ping ),
+    path('search/<slug:recipe_query>', views.search),
+    path('search/<slug:recipe_query>/<int:page_num>', views.search)
 ]
