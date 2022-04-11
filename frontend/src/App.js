@@ -51,15 +51,12 @@ class Searcher extends Component {
     }
 }
 
-// TODO: convert function to Component
-// TODO: prevent re-rendering on every type
 function Recipe({query, setQuery}){
 
     const client = useQueryClient()
-    // const [query, setQuery] = useState();
 
     const { isLoading, isError, data, error } = useQuery(['searchRecipes', query], async () => {
-        const response = await fetch("http://localhost:8000/search/" + query)
+        const response = await fetch("http://localhost:8000/search/" + query.replace(/ /g, '_'))
                if (!response.ok) {
                    throw new Error('Network response was not ok')
                }

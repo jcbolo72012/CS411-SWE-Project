@@ -33,14 +33,13 @@ def complex_search(query: str, paramls: list = None):
 
     complex_search_paramstr = parse_paramls(paramls)
 
-    complex_search_url = complex_search_url + "?query=" + query + "&apiKey=" + api_Key + complex_search_paramstr
-    r = requests.get(complex_search_url)
+    headers = {
+        'x-api-key': api_Key
+    }
+
+    complex_search_url = complex_search_url + "?query=" + "_".join(query.split("%20")) + complex_search_paramstr
+    r = requests.get(complex_search_url, headers=headers)
     content = dict(r.json())
-    # print("The following are the results from the complex search: \n\n")
-
-    # print(content["results"])
-    # print(api_Key)
-
     return content
 
 
@@ -76,19 +75,30 @@ def spooncular_function(functionality: str, query: str, paramls: list = None) ->
 
     spooncular_search_paramstr = parse_paramls(paramls)
 
-    spooncular_url = spooncular_url + "?query=" + query + "&apiKey=" + api_Key + spooncular_search_paramstr
-    r = requests.get(spooncular_url)
-    content = dict(r.json())
-    # print("The following are the results from the function: \n\n")
+    headers = {
+        'x-api-key': api_Key
+    }
 
-    # print(content["results"])
+    spooncular_url = spooncular_url + "?query=" + "_".join(query.split("%20")) + spooncular_search_paramstr
+    r = requests.get(spooncular_url, headers=headers)
 
     return 1
 
-def search(request, recipe_query, page_num=0):
+
+def search(request, recipe_query, page_num=1):
     if recipe_query != "undefined":
-        return JsonResponse(complex_search(recipe_query, [("offset",page_num*10 - 10)]))
-    return ping(request)
+        response = complex_search(recipe_query, [])
+        print(response)
+        if "status" in response and response["status"] == "failure" or \
+            "total_results" in response and response["total_results"] == 0:
+            return JsonResponse({
+                "Error": "Invalid Spoonacular API_Key!"
+            }, status=401)
+        else:
+            return JsonResponse(response)
+    return JsonResponse({
+        "Error": "Empty query"
+    }, status=200)  # Needs to be 200 in order to fix the initial basic query
 
 def information(request, info_query, page_num=0):
     if info_query != "undefined":
