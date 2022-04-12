@@ -5,8 +5,9 @@ import typing
 import os
 
 def_complex_search_url = "https://api.spoonacular.com/recipes/complexSearch"
+def_get_info_url =  "https://api.spoonacular.com/recipes/"
+#GET https://api.spoonacular.com/recipes/{id}/information
 api_Key = os.environ.get("SPOONACULAR_API_KEY")
-
 
 def ping(request):
     return JsonResponse({"status": "Ok!"})
@@ -42,6 +43,25 @@ def complex_search(query: str, paramls: list = None):
     return content
 
 
+def get_info(query_id: str, paramls: list = None):
+    ##TBD
+    """
+    Notice that the json will contain 'results', 
+    """
+    get_info_url = def_get_info_url + ""
+
+    get_info_paramstr = parse_paramls(paramls)
+
+    get_info_url = get_info_url + query_id + "/information?"+ "&apiKey=" + api_Key + get_info_paramstr
+    r = requests.get(get_info_url)
+    content = dict(r.json())
+    # print("The following are the results from the get info: \n\n")
+
+    # print(content["results"])
+    # print(api_Key)
+
+    return content
+
 def_spooncular_url = "https://api.spoonacular.com/"
 
 
@@ -69,8 +89,14 @@ def search(request, recipe_query, page_num=1):
         return JsonResponse(complex_search(recipe_query, []))
     return ping(request)
 
+def information(request, info_query, page_num=1):
+    if info_query != "undefined":
+        return JsonResponse(get_info(info_query, []))
+    return ping(request)
 
-# For Recipe: Complex Search
+
+
+# For Recipe Search: Complex Search
 query_example_1 = "pasta"
 param_ls1 = [("cuisine", "italian"), ("excludeCuisine", "greek"), ("diet", "vegetarian")]
 
@@ -80,6 +106,14 @@ query_example_2 = "salad"
 param_ls2 = [("cuisine", "italian"), ("excludeCuisine", "greek"), ("diet", "vegetarian")]
 
 content_2 = complex_search(query_example_2, param_ls2)
+
+# For Recipe Info: Information
+query_example_3 = "716429"
+param_ls3 = [("includeNutrition", "false")]
+
+content_3 = get_info(query_example_3, param_ls3)
+#print(content_3)
+
 
 # print(content_1)
 # print(content_2)
