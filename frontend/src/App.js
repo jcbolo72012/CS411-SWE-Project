@@ -4,7 +4,12 @@ import {QueryClient, QueryClientProvider, useQuery, useQueryClient} from "react-
 import {Box, Button, TextField} from "@mui/material";
 import {ReactQueryDevtools} from "react-query/devtools";
 
-const client = new QueryClient();
+/**
+ * App - The default page, where users can search for a recipe
+ * Once the user generates a query, the Recipe function will regenerate the queries, if used.
+ */
+
+class App extends Component {
 
 class App extends Component{
     render() {
@@ -51,14 +56,21 @@ class Searcher extends Component {
     }
 }
 
-function Recipe({query, setQuery}){
+/**
+ *
+ * @param query
+ * @returns {JSX.Element|null} -- either new Recipes,  or no recipes (no results found)
+ * @constructor
+ */
+
+function Recipe({query}){
 
     const client = useQueryClient()
 
     const { isLoading, isError, data, error } = useQuery(['searchRecipes', query], async () => {
         const response = await fetch("http://localhost:8000/search/" + query.replace(/ /g, '_'))
                if (!response.ok) {
-                   throw new Error('Network response was not ok')
+                   return {};
                }
                return response.json()
             }, {refetchOnWindowFocus: false}

@@ -89,11 +89,14 @@ def search(request, recipe_query, page_num=1):
     if recipe_query != "undefined":
         response = complex_search(recipe_query, [])
         print(response)
-        if "status" in response and response["status"] == "failure" or \
-            "total_results" in response and response["total_results"] == 0:
+        if "status" in response and response["status"] == "failure":
             return JsonResponse({
-                "Error": "Invalid Spoonacular API_Key!"
+                "Error": "Invalid Spoonacular API Key!"
             }, status=401)
+        elif "total_results" in response and response["total_results"] == 0:
+            return JsonResponse({
+                "Error" : "No results."
+            })
         else:
             return JsonResponse(response)
     return JsonResponse({
@@ -105,42 +108,13 @@ def information(request, info_query, page_num=0):
         return JsonResponse(get_info(str(info_query), [("offset",page_num*10 - 10)]))
     return ping(request)
 
-# For Recipe Search: Complex Search
-query_example_1 = "pasta"
-param_ls1 = [("offset", 0)]
-#param_ls1 = [("cuisine", "italian"), ("excludeCuisine", "greek"), ("diet", "vegetarian")]
-
-content_1 = complex_search(query_example_1, param_ls1)
-
-query_example_0 = "pasta"
-param_ls0 = []
-#param_ls1 = [("cuisine", "italian"), ("excludeCuisine", "greek"), ("diet", "vegetarian")]
-
-content_0 = complex_search(query_example_0, param_ls0)
-
-print(content_0)
-
-query_example_2 = "salad"
-param_ls2 = [("cuisine", "italian"), ("excludeCuisine", "greek"), ("diet", "vegetarian")]
-
-#content_2 = complex_search(query_example_2, param_ls2)
-
-# For Recipe Info: Information
-query_example_3 = "716429"
-param_ls3 = [("includeNutrition", "false")]
-
-content_3 = get_info(query_example_3, param_ls3)
-print(content_1)
-# print(content_2)
-# print(content_3)
-
-# For Spooncular Function
-# TRY TO DO THIS LATER TN
-# Spooncular_example_1 = "pasta"
-# Spoon_param_ls1 = [("cuisine", "italian"), ("excludeCuisine", "greek"), ("diet", "vegetarian")]
-# Functionality_1 = "recipes"
-# Function_1 = "complexSearch"
-
-# spoon_content_1 = spooncular_function(Functionality_1, Function_1, Spooncular_example_1, Spoon_param_ls1)
-
-# print(spoon_content_1)
+# For Recipe: Complex Search
+# query_example_1 = "pasta"
+# param_ls1 = [("cuisine", "italian"), ("excludeCuisine", "greek"), ("diet", "vegetarian")]
+#
+# content_1 = complex_search(query_example_1, param_ls1)
+#
+# query_example_2 = "salad"
+# param_ls2 = [("cuisine", "italian"), ("excludeCuisine", "greek"), ("diet", "vegetarian")]
+#
+# content_2 = complex_search(query_example_2, param_ls2)
