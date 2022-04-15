@@ -7,7 +7,8 @@ import os
 def_complex_search_url = "https://api.spoonacular.com/recipes/complexSearch"
 def_get_info_url =  "https://api.spoonacular.com/recipes/"
 #GET https://api.spoonacular.com/recipes/{id}/information
-api_Key = os.environ.get("SPOONACULAR_API_KEY")
+#api_Key = os.environ.get("SPOONACULAR_API_KEY")
+api_Key = "f257b3dedd0d40b988e13df0754bc639"
 
 def ping(request):
     return JsonResponse({"status": "Ok!"})
@@ -84,39 +85,44 @@ def spooncular_function(functionality: str, query: str, paramls: list = None) ->
 
     return 1
 
-def search(request, recipe_query, page_num=1):
+def search(request, recipe_query, page_num=0):
     if recipe_query != "undefined":
-        return JsonResponse(complex_search(recipe_query, []))
+        return JsonResponse(complex_search(recipe_query, [("offset",page_num*10 - 10)]))
     return ping(request)
 
-def information(request, info_query, page_num=1):
+def information(request, info_query, page_num=0):
     if info_query != "undefined":
-        return JsonResponse(get_info(info_query, []))
+        return JsonResponse(get_info(str(info_query), [("offset",page_num*10 - 10)]))
     return ping(request)
-
-
 
 # For Recipe Search: Complex Search
 query_example_1 = "pasta"
-param_ls1 = [("cuisine", "italian"), ("excludeCuisine", "greek"), ("diet", "vegetarian")]
+param_ls1 = [("offset", 0)]
+#param_ls1 = [("cuisine", "italian"), ("excludeCuisine", "greek"), ("diet", "vegetarian")]
 
 content_1 = complex_search(query_example_1, param_ls1)
+
+query_example_0 = "pasta"
+param_ls0 = []
+#param_ls1 = [("cuisine", "italian"), ("excludeCuisine", "greek"), ("diet", "vegetarian")]
+
+content_0 = complex_search(query_example_0, param_ls0)
+
+print(content_0)
 
 query_example_2 = "salad"
 param_ls2 = [("cuisine", "italian"), ("excludeCuisine", "greek"), ("diet", "vegetarian")]
 
-content_2 = complex_search(query_example_2, param_ls2)
+#content_2 = complex_search(query_example_2, param_ls2)
 
 # For Recipe Info: Information
 query_example_3 = "716429"
 param_ls3 = [("includeNutrition", "false")]
 
 content_3 = get_info(query_example_3, param_ls3)
-#print(content_3)
-
-
-# print(content_1)
+print(content_1)
 # print(content_2)
+# print(content_3)
 
 # For Spooncular Function
 # TRY TO DO THIS LATER TN
