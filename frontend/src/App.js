@@ -1,9 +1,23 @@
 import './App.css';
-import {Component, useState} from "react";
-import {useQuery, useQueryClient} from "react-query";
+import React, {Component, useState} from "react";
+import {QueryClient, QueryClientProvider, useQuery, useQueryClient} from "react-query";
 import {Box, Button, TextField} from "@mui/material";
+import {ReactQueryDevtools} from "react-query/devtools";
 
-class App extends Component {
+const client = new QueryClient();
+
+class App extends Component{
+    render() {
+        return (
+        <QueryClientProvider client={client}>
+            <Searcher />
+            <ReactQueryDevtools initialIsOpen={false} />
+        </QueryClientProvider>
+        );
+    }
+}
+
+class Searcher extends Component {
 
     constructor(props) {
         super(props);
