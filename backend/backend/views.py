@@ -7,8 +7,8 @@ import os
 def_complex_search_url = "https://api.spoonacular.com/recipes/complexSearch"
 def_get_info_url =  "https://api.spoonacular.com/recipes/"
 #GET https://api.spoonacular.com/recipes/{id}/information
-#api_Key = os.environ.get("SPOONACULAR_API_KEY")
-api_Key = "f257b3dedd0d40b988e13df0754bc639"
+api_Key = os.environ.get("SPOONACULAR_API_KEY")
+
 
 def ping(request):
     return JsonResponse({"status": "Ok!"})
