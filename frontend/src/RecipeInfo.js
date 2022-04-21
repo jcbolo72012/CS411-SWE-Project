@@ -2,11 +2,11 @@ import {Component} from "react";
 import {useParams} from "react-router-dom";
 import {useQuery} from "react-query";
 
-export default function RecipeInfo(){
+export default function RecipeInfo({recipe_id}){
     let params = useParams();
 
-    const { isLoading, isError, data, error } = useQuery(['getInfo', id], async () => {
-        const response = await fetch("http://localhost:8000/information/" + id)
+    const { isLoading, isError, data, error } = useQuery(['getInfo', recipe_id], async () => {
+        const response = await fetch("http://localhost:8000/information/" + recipe_id)
                if (!response.ok) {
                    return null
                }
@@ -23,10 +23,6 @@ export default function RecipeInfo(){
         return null
     }
 
-    return (
-
-
-
-    )
+    return null
 
 }

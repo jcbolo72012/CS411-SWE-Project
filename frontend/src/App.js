@@ -9,15 +9,10 @@ import {ReactQueryDevtools} from "react-query/devtools";
  * Once the user generates a query, the Recipe function will regenerate the queries, if used.
  */
 
-class App extends Component {
-
 class App extends Component{
     render() {
         return (
-        <QueryClientProvider client={client}>
             <Searcher />
-            <ReactQueryDevtools initialIsOpen={false} />
-        </QueryClientProvider>
         );
     }
 }
@@ -50,6 +45,7 @@ class Searcher extends Component {
                           <Button variant="contained" type="submit">Search</Button>
                   </Box>
               </form>
+              <ReactQueryDevtools initialIsOpen={false} />
               <Recipe query={this.state.clippedSearch}/>
           </div>
         );
@@ -57,9 +53,9 @@ class Searcher extends Component {
 }
 
 /**
- *
- * @param query
- * @returns {JSX.Element|null} -- either new Recipes,  or no recipes (no results found)
+ * Recipe
+ * @param query -- The recipe to search for
+ * @returns {JSX.Element|null} -- either a list of matched recipe ideas,  or no recipes (no results found)
  * @constructor
  */
 

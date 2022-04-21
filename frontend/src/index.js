@@ -3,24 +3,35 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import {QueryClient, QueryClientProvider} from "react-query";
-import { ReactQueryDevtools } from 'react-query/devtools'
-import { BrowserRouter } from "react-router-dom";
+import {QueryClient, QueryClientProvider, useQueryClient} from "react-query";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+    Link,
+} from "react-router-dom";
+import RecipeInfo from "./RecipeInfo";
 
+const client=new QueryClient();
 
 ReactDOM.render(
     <div class="App">
-  <React.StrictMode>
-
-<BrowserRouter>
-  <Routes>
+    <React.StrictMode>
     <QueryClientProvider client={client}>
-      <App />
-      <ReactQueryDevtools initialIsOpen={false} />
+    <BrowserRouter>
+      <Routes>
+          <Route path="/" element={ <App/> }/>
+          <Route path="/recipe/:recipeID" element={<RecipeInfo />} />
+          <Route path="*" element={
+            <main style={{ padding: "1rem" }}>
+              <p>Whoops! Page not found!</p>
+                <Link to="/">Back to main page?</Link>
+            </main>
+          }/>
+      </Routes>
+    </BrowserRouter>
     </QueryClientProvider>
-  </Routes>
-</BrowserRouter>
-  </React.StrictMode>
+    </React.StrictMode>
     </div>,
   document.getElementById('root')
 );

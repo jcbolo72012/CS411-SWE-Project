@@ -32,6 +32,7 @@ Yue, Michael, D <br>
 <br>
 
 <strong>Running the Application</strong>
-1. In the backend directory, run "export SPOONACULAR_API_KEY=[YOUR_API_KEY]" and "python manage.py runserver"
-2. In the frontend directory, run "npm i" and "npm start"
+1. Create `keys.conf` containing one variable, containing your spoonacular API in the form: `SPOONACULAR_API_KEY=[YOUR_API_KEY]`
+2. Run `setup.sh` to setup all libraries
+3. Run `start.sh` to start both the frontend and backend servers.
 
