@@ -21,10 +21,10 @@ ReactDOM.render(
     <BrowserRouter>
       <Routes>
           <Route path="/" element={ <App/> }/>
-          <Route path="/recipe/:recipeID" element={<RecipeInfo />} />
+          <Route path="/recipe/:recipe_id" element={<RecipeInfo/>}/>
           <Route path="*" element={
             <main style={{ padding: "1rem" }}>
-              <p>Whoops! Page not found!</p>
+              <h3>Whoops! Page not found!</h3>
                 <Link to="/">Back to main page?</Link>
             </main>
           }/>

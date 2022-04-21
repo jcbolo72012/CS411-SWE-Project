@@ -1,7 +1,8 @@
 import './App.css';
 import React, {Component, useState} from "react";
 import {QueryClient, QueryClientProvider, useQuery, useQueryClient} from "react-query";
-import {Box, Button, TextField} from "@mui/material";
+import {Box, Button, Link, TextField} from "@mui/material";
+import {Outlet} from "react-router-dom";
 import {ReactQueryDevtools} from "react-query/devtools";
 
 /**
@@ -47,6 +48,7 @@ class Searcher extends Component {
               </form>
               <ReactQueryDevtools initialIsOpen={false} />
               <Recipe query={this.state.clippedSearch}/>
+              <Outlet/>
           </div>
         );
     }
@@ -84,15 +86,14 @@ function Recipe({query}){
     } if (isError) {
         return <div><h3>Error! {error}</h3></div>
     } if(data && data.results) {
-        console.log(data)
         return(
             <div>
             {data.results.map ((recipe, index) => (
-                <div>
+                <div key={index}>
                     <Box sx={{ border: 1, display: "flex", mx: 10, p: 1}}>
-                        <h2>{recipe.title}</h2><br/>
-                        Recipe ID: {recipe.id}<br/>
+                        <h2>{recipe.title}</h2>
                         <img src={recipe.image}/>
+                        <Link component="button" to={"/recipe/" + recipe.id}>Go to Recipe</Link>
                     </Box>
                 </div>
             ))}

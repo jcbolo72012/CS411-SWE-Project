@@ -88,7 +88,7 @@ def spooncular_function(functionality: str, query: str, paramls: list = None) ->
 def search(request, recipe_query, page_num=1):
     if recipe_query != "undefined":
         response = complex_search(recipe_query, [])
-        print(response)
+        # print(response)
         if "status" in response and response["status"] == "failure":
             return JsonResponse({
                 "Error": "Invalid Spoonacular API Key!"
