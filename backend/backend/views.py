@@ -5,6 +5,8 @@ import typing
 import os
 
 def_complex_search_url = "https://api.spoonacular.com/recipes/complexSearch"
+def_get_info_url =  "https://api.spoonacular.com/recipes/"
+#GET https://api.spoonacular.com/recipes/{id}/information
 api_Key = os.environ.get("SPOONACULAR_API_KEY")
 
 
@@ -31,16 +33,34 @@ def complex_search(query: str, paramls: list = None):
 
     complex_search_paramstr = parse_paramls(paramls)
 
-    complex_search_url = complex_search_url + "?query=" + query + "&apiKey=" + api_Key + complex_search_paramstr
-    r = requests.get(complex_search_url)
+    headers = {
+        'x-api-key': api_Key
+    }
+
+    complex_search_url = complex_search_url + "?query=" + "_".join(query.split("%20")) + complex_search_paramstr
+    r = requests.get(complex_search_url, headers=headers)
     content = dict(r.json())
-    # print("The following are the results from the complex search: \n\n")
+    return content
+
+
+def get_info(query_id: str, paramls: list = None):
+    ##TBD
+    """
+    Notice that the json will contain 'results', 
+    """
+    get_info_url = def_get_info_url + ""
+
+    get_info_paramstr = parse_paramls(paramls)
+
+    get_info_url = get_info_url + query_id + "/information?"+ "&apiKey=" + api_Key + get_info_paramstr
+    r = requests.get(get_info_url)
+    content = dict(r.json())
+    # print("The following are the results from the get info: \n\n")
 
     # print(content["results"])
     # print(api_Key)
 
     return content
-
 
 def_spooncular_url = "https://api.spoonacular.com/"
 
@@ -55,42 +75,46 @@ def spooncular_function(functionality: str, query: str, paramls: list = None) ->
 
     spooncular_search_paramstr = parse_paramls(paramls)
 
-    spooncular_url = spooncular_url + "?query=" + query + "&apiKey=" + api_Key + spooncular_search_paramstr
-    r = requests.get(spooncular_url)
-    content = dict(r.json())
-    # print("The following are the results from the function: \n\n")
+    headers = {
+        'x-api-key': api_Key
+    }
 
-    # print(content["results"])
+    spooncular_url = spooncular_url + "?query=" + "_".join(query.split("%20")) + spooncular_search_paramstr
+    r = requests.get(spooncular_url, headers=headers)
 
     return 1
 
+
 def search(request, recipe_query, page_num=1):
     if recipe_query != "undefined":
-        return JsonResponse(complex_search(recipe_query, []))
+        response = complex_search(recipe_query, [])
+        print(response)
+        if "status" in response and response["status"] == "failure":
+            return JsonResponse({
+                "Error": "Invalid Spoonacular API Key!"
+            }, status=401)
+        elif "total_results" in response and response["total_results"] == 0:
+            return JsonResponse({
+                "Error" : "No results."
+            })
+        else:
+            return JsonResponse(response)
+    return JsonResponse({
+        "Error": "Empty query"
+    }, status=200)  # Needs to be 200 in order to fix the initial basic query
+
+def information(request, info_query, page_num=0):
+    if info_query != "undefined":
+        return JsonResponse(get_info(str(info_query), [("offset",page_num*10 - 10)]))
     return ping(request)
 
-
 # For Recipe: Complex Search
-query_example_1 = "pasta"
-param_ls1 = [("cuisine", "italian"), ("excludeCuisine", "greek"), ("diet", "vegetarian")]
-
-content_1 = complex_search(query_example_1, param_ls1)
-
-query_example_2 = "salad"
-param_ls2 = [("cuisine", "italian"), ("excludeCuisine", "greek"), ("diet", "vegetarian")]
-
-content_2 = complex_search(query_example_2, param_ls2)
-
-# print(content_1)
-# print(content_2)
-
-# For Spooncular Function
-# TRY TO DO THIS LATER TN
-# Spooncular_example_1 = "pasta"
-# Spoon_param_ls1 = [("cuisine", "italian"), ("excludeCuisine", "greek"), ("diet", "vegetarian")]
-# Functionality_1 = "recipes"
-# Function_1 = "complexSearch"
-
-# spoon_content_1 = spooncular_function(Functionality_1, Function_1, Spooncular_example_1, Spoon_param_ls1)
-
-# print(spoon_content_1)
+# query_example_1 = "pasta"
+# param_ls1 = [("cuisine", "italian"), ("excludeCuisine", "greek"), ("diet", "vegetarian")]
+#
+# content_1 = complex_search(query_example_1, param_ls1)
+#
+# query_example_2 = "salad"
+# param_ls2 = [("cuisine", "italian"), ("excludeCuisine", "greek"), ("diet", "vegetarian")]
+#
+# content_2 = complex_search(query_example_2, param_ls2)

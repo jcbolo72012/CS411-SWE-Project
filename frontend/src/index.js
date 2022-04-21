@@ -5,16 +5,21 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import {QueryClient, QueryClientProvider} from "react-query";
 import { ReactQueryDevtools } from 'react-query/devtools'
+import { BrowserRouter } from "react-router-dom";
 
-const client = new QueryClient();
 
 ReactDOM.render(
     <div class="App">
   <React.StrictMode>
-  <QueryClientProvider client={client}>
-    <App />
-    <ReactQueryDevtools initialIsOpen={false} />
-  </QueryClientProvider>
+
+<BrowserRouter>
+  <Routes>
+    <QueryClientProvider client={client}>
+      <App />
+      <ReactQueryDevtools initialIsOpen={false} />
+    </QueryClientProvider>
+  </Routes>
+</BrowserRouter>
   </React.StrictMode>
     </div>,
   document.getElementById('root')

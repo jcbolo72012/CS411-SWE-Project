@@ -1,9 +1,28 @@
 import './App.css';
-import {Component, useState} from "react";
-import {useQuery, useQueryClient} from "react-query";
+import React, {Component, useState} from "react";
+import {QueryClient, QueryClientProvider, useQuery, useQueryClient} from "react-query";
 import {Box, Button, TextField} from "@mui/material";
+import {ReactQueryDevtools} from "react-query/devtools";
+
+/**
+ * App - The default page, where users can search for a recipe
+ * Once the user generates a query, the Recipe function will regenerate the queries, if used.
+ */
 
 class App extends Component {
+
+class App extends Component{
+    render() {
+        return (
+        <QueryClientProvider client={client}>
+            <Searcher />
+            <ReactQueryDevtools initialIsOpen={false} />
+        </QueryClientProvider>
+        );
+    }
+}
+
+class Searcher extends Component {
 
     constructor(props) {
         super(props);
@@ -37,17 +56,21 @@ class App extends Component {
     }
 }
 
-// TODO: convert function to Component
-// TODO: prevent re-rendering on every type
-function Recipe({query, setQuery}){
+/**
+ *
+ * @param query
+ * @returns {JSX.Element|null} -- either new Recipes,  or no recipes (no results found)
+ * @constructor
+ */
+
+function Recipe({query}){
 
     const client = useQueryClient()
-    // const [query, setQuery] = useState();
 
     const { isLoading, isError, data, error } = useQuery(['searchRecipes', query], async () => {
-        const response = await fetch("http://localhost:8000/search/" + query)
+        const response = await fetch("http://localhost:8000/search/" + query.replace(/ /g, '_'))
                if (!response.ok) {
-                   throw new Error('Network response was not ok')
+                   return {};
                }
                return response.json()
             }, {refetchOnWindowFocus: false}
