@@ -1,8 +1,8 @@
 import './App.css';
 import React, {Component, useState} from "react";
 import {QueryClient, QueryClientProvider, useQuery, useQueryClient} from "react-query";
-import {Box, Button, Link, TextField} from "@mui/material";
-import {Outlet} from "react-router-dom";
+import {Box, Button, Link, TextField, Stack, Divider} from "@mui/material";
+import {Link as RouterLink} from 'react-router-dom';
 import {ReactQueryDevtools} from "react-query/devtools";
 
 /**
@@ -13,7 +13,7 @@ import {ReactQueryDevtools} from "react-query/devtools";
 class App extends Component{
     render() {
         return (
-            <Searcher />
+            <Searcher/>
         );
     }
 }
@@ -38,17 +38,17 @@ class Searcher extends Component {
         return (
           <div class="App">
               <form onSubmit={this.onSubmit}>
-                  <Box sx={{border: 1, mx: 10, p: 5}} autocomplete="off">
-                          <TextField id="outlined-basic" sx={{ input: {color: 'white'}}}
+                  <Box sx={{mx: 50, p: 5}} autocomplete="off">
+                          <TextField id="outlined-basic" sx={{ minWidth: 750, input: {color: 'white'}}}
                                      InputLabelProps={{ style: {color: 'white'}}}
                                      name="query" label="Search for Recipes..." variant="outlined"
                                      value={this.state.query} onChange={this.onChange}/>
-                          <Button variant="contained" type="submit">Search</Button>
+                          <br/>
+                          <Button variant="contained" size='large' type="submit">Search</Button>
                   </Box>
               </form>
               <ReactQueryDevtools initialIsOpen={false} />
               <Recipe query={this.state.clippedSearch}/>
-              <Outlet/>
           </div>
         );
     }
@@ -85,19 +85,30 @@ function Recipe({query}){
         return <div><h3>Loading...</h3></div>
     } if (isError) {
         return <div><h3>Error! {error}</h3></div>
+    } if(data && data.status && data.status !== "Ok!") {
+        return <div><h3>Error! Spoonacular API returned error.</h3></div>
     } if(data && data.results) {
-        return(
-            <div>
-            {data.results.map ((recipe, index) => (
-                <div key={index}>
-                    <Box sx={{ border: 1, display: "flex", mx: 10, p: 1}}>
-                        <h2>{recipe.title}</h2>
-                        <img src={recipe.image}/>
-                        <Link component="button" to={"/recipe/" + recipe.id}>Go to Recipe</Link>
-                    </Box>
-                </div>
-            ))}
+        if (data.totalResults === 0){
+            return (<div>
+                <h4>No recipes found! Try searching again.</h4>
             </div>)
+        } else {
+            return (
+                <div>
+                    {data.results.map((recipe, index) => (
+                        <div key={index}>
+                            <Box sx={{display: "flex", mx: 50, pt: 2}}>
+                                <Stack direction="row" spacing={2} divider={<Divider orientation="vertical" flexItem/>}>
+                                    {/* TODO: get rid of that stupid lower part because of the stupid image that exists! */}
+                                    <img style={{width: 'auto', maxHeight: '50%'}} src={recipe.image}/>
+                                    <h2>{recipe.title}</h2>
+                                    <Link component={RouterLink} to={"/recipe/" + recipe.id}>Go to Recipe</Link>
+                                </Stack>
+                            </Box>
+                        </div>
+                    ))}
+                </div>)
+        }
     }
 }
 
