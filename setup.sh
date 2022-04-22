@@ -1,7 +1,7 @@
+#!/bin/bash
+
 cd backend && (
-pip install django
-pip install requests
-python -m pip install django-cors-headers
+pip install -r requirements.txt
 )
 
 cd ../frontend && npm i --force
