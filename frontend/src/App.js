@@ -36,7 +36,7 @@ class Searcher extends Component {
 
     render(){
         return (
-          <div class="App">
+          <div>
               <form onSubmit={this.onSubmit}>
                   <Box justifyContent="center" sx={{display: "flex", mx: 'auto', p: 2, width: "75%"}} autocomplete="off">
                           <TextField id="outlined-basic" sx={{ width: "25%", input: {color: 'white'}}}
