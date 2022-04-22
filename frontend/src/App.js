@@ -38,8 +38,8 @@ class Searcher extends Component {
         return (
           <div class="App">
               <form onSubmit={this.onSubmit}>
-                  <Box sx={{mx: 50, p: 5}} autocomplete="off">
-                          <TextField id="outlined-basic" sx={{ minWidth: 750, input: {color: 'white'}}}
+                  <Box justifyContent="center" sx={{display: "flex", mx: 'auto', p: 2, width: "75%"}} autocomplete="off">
+                          <TextField id="outlined-basic" sx={{ width: "25%", input: {color: 'white'}}}
                                      InputLabelProps={{ style: {color: 'white'}}}
                                      name="query" label="Search for Recipes..." variant="outlined"
                                      value={this.state.query} onChange={this.onChange}/>
@@ -97,8 +97,8 @@ function Recipe({query}){
                 <div>
                     {data.results.map((recipe, index) => (
                         <div key={index}>
-                            <Box sx={{display: "flex", mx: 50, pt: 2}}>
-                                <Stack direction="row" spacing={2} divider={<Divider orientation="vertical" flexItem/>}>
+                            <Box sx={{display: "flex", mx: 'auto', pt: 2, width: "75%"}}>
+                                <Stack direction="row" spacing={2} divider={<Divider orientation="vertical" color="white" flexItem/>}>
                                     {/* TODO: get rid of that stupid lower part because of the stupid image that exists! */}
                                     <img style={{width: 'auto', maxHeight: '50%'}} src={recipe.image}/>
                                     <h2>{recipe.title}</h2>
