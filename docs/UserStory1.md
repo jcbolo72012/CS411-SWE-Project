@@ -1,10 +1,10 @@
-## User Story 1: Login/Logout for personalized account synced with instacart
+## User Story 1: Login/Logout for personalized account synced with Todoist
 
 ### Summary:
-The user must log in through an Instacart account. The home page will be the login page, which will let users be able to enter their information using their Instacart account.
+The user must log in through an Instacart account. The home page will be the search page (see Story 2), which will let users be able to enter their information using their Instacart account.
 
 ### Happy Path:
-* Login: On the login page, there will be two boxes for their Instacart username and password, which the user can enter. Once the button to login is pressed and if the account authenticates correctly, then the user’s view will be sent to the login screen, and onto (some page).
+* Login: At the top of every page, there will be a "Login" button if the user is not already logged in. This will redirect the user to login with their Todoist account to connect grocery list capabilities.
 
 * Logout: On the top of every page, there will be a “Logout” button, allowing the user to log out and return to the login page.
 
