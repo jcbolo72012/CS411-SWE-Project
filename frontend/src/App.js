@@ -85,12 +85,11 @@ function Recipe({query}){
 
     // console.log(query)
     // console.log(data)
-
     if(isLoading) {
         return <div><h3>Loading...</h3></div>
     } if (isError) {
         return <div><h3>Error! {error}</h3></div>
-    } if(data && data.status && data.status !== "Ok!") {
+    } if(data && data.status && data.status !== 200) {
         return <div><h3>Error! Spoonacular API returned error.</h3></div>
     } if(data && data.results) {
         if (data.totalResults === 0){
