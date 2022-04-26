@@ -13,6 +13,8 @@ import {
 } from "react-router-dom";
 import RecipeInfo from "./RecipeInfo";
 import MenuBar from "./MenuBar";
+import Auth from "./Auth";
+import {Login, Logout} from "./Login";
 
 const client=new QueryClient();
 
@@ -24,8 +26,11 @@ ReactDOM.render(
             <Routes>
               <Route path="/" element={<Navbar/>}>
                   <Route path="/" element={<App/>}/>
+                  <Route path="/login" element={<Login/>}/>
+                  <Route path="/logout" element={<Logout/>}/>
+
+                  <Route path="/auth?code=:code&state=:state" element={<Auth/>}/>
                   <Route path="/recipe/:recipe_id/&:secret_string" element={<RecipeInfo/>}/>
-                  {/*<Route path="/auth/:code" element={<Auth/>}*/}
                   <Route path="*" element={
                     <main style={{ padding: "1rem" }}>
                       <h3>Whoops! Page not found!</h3>
