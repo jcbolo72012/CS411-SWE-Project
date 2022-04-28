@@ -56,11 +56,7 @@ function Navbar(){
 }
 
 export function isAuth(){
-    if("token" in localStorage){
-        localStorage.getItem("token")
-        return true;
-    }
-    return false;
+    return !!localStorage.getItem("token");
 }
 
 // If you want to start measuring performance in your app, pass a function

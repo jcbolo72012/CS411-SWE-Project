@@ -12,10 +12,6 @@ export default function MenuBar () {
         setAnchorEl(null);
     };
 
-    const handleChange = (event) => {
-        setAuth(event.target.checked);
-    };
-
     const handleMenu = (event) => {
         setAnchorEl(event.currentTarget);
     };
@@ -30,22 +26,23 @@ export default function MenuBar () {
                     <Typography variant="h6" sx={{flexGrow: 1, b: true}}>
                         <b>Cookout</b>
                     </Typography>
-                        <div>
-                            <IconButton size='large' color='inherit' aria-haspopup="true" onClick={handleMenu}>
-                                <Avatar/>
-                            </IconButton>
-                            <Menu id="menu-appbar" anchorEl={anchorEl}
-                            anchorOrigin={{vertical: 'top', horizontal: 'right',}}
-                            keepMounted transformOrigin={{vertical: 'top', horizontal: 'right',}}
-                            open={Boolean(anchorEl)} onClose={handleClose}
-                            >
-                                {isAuth() && (<MenuItem onClose={handleClose()}>
-                                    <Link href="/login">Login</Link></MenuItem>)}
-                                {!isAuth() && (<MenuItem onClose={handleClose()}>
-                                    <Link href="/logout">Logout</Link>
-                                </MenuItem>)}
-                            </Menu>
-                        </div>
+                    {isAuth() ? (<Link to="/login">Logout</Link>) : (<Link to="/login">Login</Link>)}
+                        {/*<div>*/}
+                        {/*    <IconButton size='large' color='inherit' aria-haspopup="true" onClick={handleMenu}>*/}
+                        {/*        <Avatar/>*/}
+                        {/*    </IconButton>*/}
+                        {/*    <Menu id="menu-appbar" anchorEl={anchorEl}*/}
+                        {/*    anchorOrigin={{vertical: 'top', horizontal: 'right',}}*/}
+                        {/*    keepMounted transformOrigin={{vertical: 'top', horizontal: 'right',}}*/}
+                        {/*    open={Boolean(anchorEl)} onClose={handleClose}*/}
+                        {/*    >*/}
+                        {/*        {isAuth() && (<MenuItem onClose={handleClose()}>*/}
+                        {/*            <Link href="/login">Login</Link></MenuItem>)}*/}
+                        {/*        {!isAuth() && (<MenuItem onClose={handleClose()}>*/}
+                        {/*            <Link href="/logout">Logout</Link>*/}
+                        {/*        </MenuItem>)}*/}
+                        {/*    </Menu>*/}
+                        {/*</div>*/}
                 )
 
                 }
