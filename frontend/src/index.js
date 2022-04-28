@@ -29,7 +29,7 @@ ReactDOM.render(
                   <Route path="/login" element={<Login/>}/>
                   <Route path="/logout" element={<Logout/>}/>
 
-                  <Route path="/auth?code=:code&state=:state" element={<Auth/>}/>
+                  <Route path="/auth" element={<Auth/>}/>
                   <Route path="/recipe/:recipe_id/&:secret_string" element={<RecipeInfo/>}/>
                   <Route path="*" element={
                     <main style={{ padding: "1rem" }}>

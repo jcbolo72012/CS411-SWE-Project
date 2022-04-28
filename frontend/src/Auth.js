@@ -1,10 +1,12 @@
-import {useParams} from "react-router-dom";
-import {useQuery} from "react-query";
+import {useLocation, useParams} from "react-router-dom";
+
+function useQuery(){
+    const {search} = useLocation();
+    return React.useMemo(() => new URLSearchParams(search), [search]);
+}
 
 export default function Auth(){
-
-    const {code, state} = useParams();
-
+    const {query} = useQuery();
 
     /**
      * Request: "localhost:8000/authorize" with code, secret string to verify
@@ -22,6 +24,13 @@ export default function Auth(){
      * - Success (return 200, with a success
      */
     const { isLoading, isError, data, error } = useQuery(['authorize', code] = async () => {
+         if(query.get("error") != null){
+             return {"error": query.get("error")}
+         }
+
+         let code = query.get("code")
+         let state = query.get("state")
+
          const response = await fetch("http://localhost:8000/authorize/", {
              method: "POST",
              body: JSON.stringify({
@@ -29,18 +38,18 @@ export default function Auth(){
                  state: state
              })
          })
+
+         return response.json();
      })
 
-    if(isLoading){
+    if(data && data === {}){
+        return <div><h3>Something incorrect happened! </h3> <p>{data.error} </p></div>
+    } if(isLoading){
         return (<h3>Authorizing...</h3>)
-    } else if (isError) {
+    } if (isError) {
         return (<h3>Error! {error}</h3>)
     } else {
         localStorage.setItem("token", data.access_code)
         return (<h3>Successfully authorized! You're now logged in!</h3>)
     }
-
-
-
-
 }
