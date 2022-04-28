@@ -1,10 +1,9 @@
-import json
-
-import django.http
-from django.http import HttpResponse, JsonResponse
+from django.http import JsonResponse
 import requests
 import typing
 import os
+import json
+from .models import Auth, User, Review
 
 def_complex_search_url = "https://api.spoonacular.com/recipes/complexSearch"
 def_get_info_url =  "https://api.spoonacular.com/recipes/"
@@ -108,8 +107,16 @@ def search(request, recipe_query, page_num=1):
 
 def information(request, info_query, page_num=0):
     if info_query != "undefined":
-        return JsonResponse(get_info(str(info_query), [("offset",page_num*10 - 10)]))
+        return JsonResponse(get_info(str(info_query), [("offset", page_num*10 - 10)]))
     return ping(request)
+
+def start_query(request):
+    if request.method == "POST":
+        state = request.POST.get("state")
+        auth = Auth(state=state)
+        return JsonResponse({"state": state, "client_id": os.environ.get("TODOIST_CLIENT_ID")})
+    else:
+        return JsonResponse({}, 204)
 
 # For Recipe: Complex Search
 # query_example_1 = "pasta"
