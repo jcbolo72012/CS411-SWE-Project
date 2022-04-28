@@ -112,8 +112,11 @@ def information(request, info_query, page_num=0):
 
 def start_query(request):
     if request.method == "POST":
-        state = request.POST.get("state")
-        auth = Auth(state=state)
+        body = json.loads(request.body.decode('utf8').replace("'", ""))
+        print(body)
+        state = body['state']
+        auth = Auth(state=body['state'])
+        auth.save()
         return JsonResponse({"state": state, "client_id": os.environ.get("TODOIST_CLIENT_ID")})
     else:
         return JsonResponse({}, 204)

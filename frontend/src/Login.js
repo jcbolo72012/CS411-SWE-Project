@@ -13,24 +13,17 @@ export function Login(){
      *   state: state}
      */
 
-    var formdata = new FormData();
-    formdata.append("state", random_str);
+    let req = new Request('http://localhost:8000/start_auth', {
+        method: 'POST',
+        body: JSON.stringify({'state': random_str}),
+        redirect: "follow"
+    });
 
-    var requestOptions = {
-      method: 'POST',
-      body: formdata,
-      redirect: 'follow', headers: {
-        "Content-Type": "application/x-www-form-urlencoded"
-        }
-    };
 
     const {isLoading, isError, data, error} = useQuery(["setString"], async () => {
-        console.log(random_str)
-        let response = await fetch("http://localhost:8000/start_auth", requestOptions)
+        const response = await fetch(req)
         return response.json()
-    }, { refetchOnWindowFocus: false, retry: false })
-
-
+    }, { refetchOnWindowFocus: false, retry: false})
 
     if(isLoading){
         return <h3>Redirecting...</h3>

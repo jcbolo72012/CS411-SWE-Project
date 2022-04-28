@@ -43,9 +43,6 @@ export default function MenuBar () {
                         {/*        </MenuItem>)}*/}
                         {/*    </Menu>*/}
                         {/*</div>*/}
-                )
-
-                }
                 </Toolbar>
             </AppBar>
         </Box>
