@@ -26,7 +26,7 @@ export default function MenuBar () {
                     <Typography variant="h6" sx={{flexGrow: 1, b: true, color: 'white'}} component={Link} InputProps={{disableUnderline: true}} to="/">
                         <b>Cookout</b>
                     </Typography>
-                    {isAuth() ? (<Link to="/login">Logout</Link>) : (<Link to="/login">Login</Link>)}
+                    {isAuth() ? (<Link to="/logout">Logout</Link>) : (<Link to="/login">Login</Link>)}
                         {/*<div>*/}
                         {/*    <IconButton size='large' color='inherit' aria-haspopup="true" onClick={handleMenu}>*/}
                         {/*        <Avatar/>*/}

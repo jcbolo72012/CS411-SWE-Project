@@ -13,7 +13,7 @@ export function Login(){
      *   state: state}
      */
 
-    let req = new Request('http://localhost:8000/start_auth', {
+    let req = new Request('http://localhost:8000/start_auth/', {
         method: 'POST',
         body: JSON.stringify({'state': random_str}),
         redirect: "follow"
@@ -30,7 +30,6 @@ export function Login(){
     } if (isError) {
         return <div><h3>Something wrong happened.</h3> <p>{error}</p></div>
     } if (data) {
-        // return (<Navigate to={link}/>)
         window.location.href = "https://todoist.com/oauth/authorize?client_id=" + data.client_id +
             "&scope=data:read_write&state=" + data.state;
         return null;
