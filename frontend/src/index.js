@@ -30,7 +30,7 @@ ReactDOM.render(
                   <Route path="/logout" element={<Logout/>}/>
 
                   <Route path="/auth" element={<Auth/>}/>
-                  <Route path="/recipe/:recipe_id/&:secret_string" element={<RecipeInfo/>}/>
+                  <Route path="/recipe/:recipe_id" element={<RecipeInfo/>}/>
                   <Route path="*" element={
                     <main style={{ padding: "1rem" }}>
                       <h3>Whoops! Page not found!</h3>
