@@ -1,29 +1,30 @@
-import React from "react";
+import React, {useState} from "react";
 import {Link, useParams} from "react-router-dom";
 import {useQuery} from "react-query";
-import {Box, Grid} from "@mui/material";
+import {Box, Button, Grid, Popover} from "@mui/material";
 import parse from 'html-react-parser';
+import {isAuth} from "./index";
+import {Form, Formik, Field} from "formik";
 
 export default function RecipeInfo(){
     const {recipe_id}= useParams();
     // console.log(recipe_id)
-
+    const [menuOpen, setMenuOpen] = useState(false);
     const { isLoading, isError, data, error } = useQuery(['getInfo', recipe_id], async () => {
         const response = await fetch("http://localhost:8000/information/" + recipe_id)
                return response.json()
             }, {refetchOnWindowFocus: false}
         )
 
+    console.log(data)
+
     if(isLoading){
         return <div><h3>Loading recipe information...</h3></div>
     } if(isError || (data && data.status && data.status === "failure")) {
         return (<div><h3>Couldn't find recipe with that ID!</h3>
                 <Link to="/">Back to main page?</Link></div>)
-    } else {
-        // guaranteed to have all fields, didn't return error.
-        // TODO: goal right now is to get the content on the page, formatting is very important though!
-        const instructions = data.analyzedInstructions[0].steps;
-
+    } if(data) {
+        const instructions = data.analyzedInstructions[0];
         return (<Box sx={{mx: 10, px: 5}}>
             <h1> {data.title} </h1>
             <Grid container spacing={2} sx={{mx: 'auto'}} >
@@ -44,18 +45,75 @@ export default function RecipeInfo(){
                         <li>{ingredient.original}</li>
                         ))}
                     </ul>
-                </Grid>
-                <Grid item xs={6} sx={{textAlign: "left"}}>
-                    <h3>Instructions</h3>
-                    {instructions.map((step, index) => (
+                    {isAuth() ?
                         <div>
-                            <h3>Step {step.number}</h3>
-                            <p>{step.step}</p><br/>
-                        </div>
-                    ))}
+                            <Button variant="contained" onClick={() => setMenuOpen(true)}>Add to list</Button>
+                            <Popover id={recipe_id} open={menuOpen}
+                            anchorOrigin={{vertical: 'top', horizontal: 'left'}}>
+                                <RecipeForm ingredients={data.extendedIngredients}/>
+                            </Popover>
+                        </div> :
+                        <h6>You need to be logged in to add ingredients to your to-do list.</h6>}
                 </Grid>
             </Grid>
         </Box>)
+    } else {
+        return null;
+    }
+}
+
+function Instructions({instructions}){
+    if (instructions === []){
+        return (
+            <Grid>
+                <h6>No instructions available!</h6>
+            </Grid>
+        )
+    }
+    return (
+    <Grid item xs={6} sx={{textAlign: "left"}}>
+        <h3>Instructions</h3>
+        {instructions.map((step, index) => (
+            <div>
+                <h3>Step {step.number}</h3>
+                <p>{step.step}</p><br/>
+            </div>
+        ))}
+    </Grid>)
+}
+
+function RecipeForm({ingredients}){
+    function handleSubmit(all_ingredients, values){
+        if(values.get("all_ingredients")){
+           // TODO: call query to add ingredients on backend
+        }
+        ingredients = values.get("ingredients")
     }
 
+    return (
+        <div>
+            <Formik initialValues={{
+                all_ingredients: false,
+                ingredients: []
+            }} onSubmit={async (values) =>{
+                handleSubmit(ingredients, values)
+            }}>
+                <Form>
+                    <label>
+                        <Field type="checkbox" name="all_ingredients">
+                            Select all
+                        </Field>
+                    </label><br/>
+                    {ingredients.map((ingredient) => (
+                        <div>
+                            <label>
+                                <Field type="checkbox" name="ingredients" value={ingredient.name}/>
+                                {ingredient.name[0].toUpperCase() + ingredient.name.substring(1)}
+                            </label><br/>
+                        </div>
+                    ))}
+                </Form>
+            </Formik>
+        </div>
+    )
 }
