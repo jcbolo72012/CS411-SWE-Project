@@ -20,39 +20,35 @@ export default function Auth(){
      * - Success (return 200, with a success
      */
 
-    return (<div>
-        <h3>{searchParams.get("code")}</h3>
-        <h3>{searchParams.get("state")}</h3>
-        </div>
-    )
+    const { isLoading, isError, data, error } = useQuery(['authorize', code] = async () => {
+         if(searchParams.get("error") != null){
+             return {"error": searchParams.get("error")}
+         }
 
-    // const { isLoading, isError, data, error } = useQuery(['authorize', code] = async () => {
-    //      if(query.get("error") != null){
-    //          return {"error": query.get("error")}
-    //      }
-    //
-    //      let code = query.get("code")
-    //      let state = query.get("state")
-    //
-    //      const response = await fetch("http://localhost:8000/authorize/", {
-    //          method: "POST",
-    //          body: JSON.stringify({
-    //              code: code,
-    //              state: state
-    //          })
-    //      })
-    //
-    //      return response.json();
-    //  })
-    //
-    // if(data && data === {}){
-    //     return <div><h3>Something incorrect happened! </h3> <p>{data.error} </p></div>
-    // } if(isLoading){
-    //     return (<h3>Authorizing...</h3>)
-    // } if (isError) {
-    //     return (<h3>Error! {error}</h3>)
-    // } else {
-    //     localStorage.setItem("token", data.access_code)
-    //     return (<h3>Successfully authorized! You're now logged in!</h3>)
-    // }
+         let code = searchParams.get("code")
+         let state = searchParams.get("state")
+
+         const response = await fetch("http://localhost:8000/authorize/", {
+             method: "POST",
+             body: JSON.stringify({
+                 code: code,
+                 state: state
+             })
+         })
+
+         return response.json();
+     })
+
+    if(data && data === {}){
+        return <div><h3>Whoops! Something happened!</h3> <p>{data.error} </p></div>
+    } if(searchParams.get("error")) {
+        return <div><h3>Whoops! Authentication failed!</h3></div>
+    } if(isLoading){
+        return (<h3>Authorizing...</h3>)
+    } if (isError) {
+        return (<h3>Error! {error}</h3>)
+    } else {
+        localStorage.setItem("token", data.access_code)
+        return (<h3>Successfully authorized! You're now logged in!</h3>)
+    }
 }
