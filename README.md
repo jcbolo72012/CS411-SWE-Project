@@ -32,7 +32,13 @@ Yue, Michael, D <br>
 <br>
 
 <strong>Running the Application</strong>
-1. Create `keys.conf` containing one variable, containing your spoonacular API in the form: `SPOONACULAR_API_KEY=[YOUR_API_KEY]`
+1. Create `keys.conf` in the outermost directory containing one variable, containing your spoonacular & todoist API keys in the form: 
+```
+SPOONACULAR_API_KEY="YOUR_API_KEY"
+TODOIST_CLIENT_ID="YOUR_CLIENT_ID"
+TODOIST_CLIENT_SECRET="YOUR_CLIENT_SECRET"
+```
+
 2. Run `setup.sh` to setup all libraries. (On Macs, you may need to do `chmod 755 setup.sh` to make the file runnable.)
 3. Run `start.sh` to start both the frontend and backend servers.
 

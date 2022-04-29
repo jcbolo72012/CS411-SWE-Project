@@ -13,6 +13,8 @@ import {
 } from "react-router-dom";
 import RecipeInfo from "./RecipeInfo";
 import MenuBar from "./MenuBar";
+import Auth from "./Auth";
+import {Login, Logout} from "./Login";
 
 const client=new QueryClient();
 
@@ -24,6 +26,10 @@ ReactDOM.render(
             <Routes>
               <Route path="/" element={<Navbar/>}>
                   <Route path="/" element={<App/>}/>
+                  <Route path="/login" element={<Login/>}/>
+                  <Route path="/logout" element={<Logout/>}/>
+
+                  <Route path="/auth" element={<Auth/>}/>
                   <Route path="/recipe/:recipe_id" element={<RecipeInfo/>}/>
                   <Route path="*" element={
                     <main style={{ padding: "1rem" }}>
@@ -43,15 +49,14 @@ ReactDOM.render(
 function Navbar(){
     return (
           <>
-            {/* Your navbar component */}
             <MenuBar />
-
-            {/* This Outlet is the place in which react-router will render your components that you need with the navbar */}
             <Outlet />
-
-            {/* You can add a footer to get fancy in here :) */}
           </>
     );
+}
+
+export function isAuth(){
+    return !!localStorage.getItem("token");
 }
 
 // If you want to start measuring performance in your app, pass a function

@@ -1,8 +1,9 @@
-import django.http
-from django.http import HttpResponse, JsonResponse
+from django.http import JsonResponse
 import requests
 import typing
 import os
+import json
+from .models import Auth, User, Review
 
 def_complex_search_url = "https://api.spoonacular.com/recipes/complexSearch"
 def_get_info_url =  "https://api.spoonacular.com/recipes/"
@@ -87,7 +88,8 @@ def spooncular_function(functionality: str, query: str, paramls: list = None) ->
 
 def search(request, recipe_query, page_num=1):
     if recipe_query != "undefined":
-        response = complex_search(recipe_query, [])
+        # for next time: use a dictionary for keys because we use that across the web
+        response = complex_search(recipe_query, [("sort", "popularity"), ("offset", (page_num - 1) * 10)])
         # print(response)
         if "status" in response and response["status"] == "failure":
             return JsonResponse({
@@ -105,8 +107,19 @@ def search(request, recipe_query, page_num=1):
 
 def information(request, info_query, page_num=0):
     if info_query != "undefined":
-        return JsonResponse(get_info(str(info_query), [("offset",page_num*10 - 10)]))
+        return JsonResponse(get_info(str(info_query), [("offset", page_num*10 - 10)]))
     return ping(request)
+
+def start_query(request):
+    if request.method == "POST":
+        body = json.loads(request.body.decode('utf8').replace("'", ""))
+        print(body)
+        state = body['state']
+        auth = Auth(state=body['state'])
+        auth.save()
+        return JsonResponse({"state": state, "client_id": os.environ.get("TODOIST_CLIENT_ID")})
+    else:
+        return JsonResponse({}, 204)
 
 # For Recipe: Complex Search
 # query_example_1 = "pasta"

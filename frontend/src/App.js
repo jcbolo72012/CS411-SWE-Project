@@ -1,7 +1,7 @@
 import './App.css';
 import React, {Component, useState} from "react";
 import {QueryClient, QueryClientProvider, useQuery, useQueryClient} from "react-query";
-import {Box, Button, Link, TextField, Stack, Divider} from "@mui/material";
+import {Box, Button, Link, TextField, Stack, Divider, Pagination, PaginationItem} from "@mui/material";
 import {Link as RouterLink} from 'react-router-dom';
 import {ReactQueryDevtools} from "react-query/devtools";
 
@@ -22,7 +22,7 @@ class Searcher extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {query: '', clippedSearch: ''}
+        this.state = {query: '', clippedSearch: '', pageNum: 1}
     }
 
     onChange = (ev) => {
@@ -31,24 +31,25 @@ class Searcher extends Component {
 
     onSubmit = (e) => {
         e.preventDefault();
-        this.setState({ clippedSearch: this.state.query })
+        this.setState({ clippedSearch: this.state.query, pageNum: 1 })
     }
 
     render(){
         return (
-          <div>
+          <div style={{alignItems: "center"}}>
               <form onSubmit={this.onSubmit}>
                   <Box justifyContent="center" sx={{display: "flex", mx: 'auto', p: 2, width: "75%"}} autocomplete="off">
+                          {/*<h1>Search</h1>*/}
                           <TextField id="outlined-basic" sx={{ width: "25%", input: {color: 'white'}}}
                                      InputLabelProps={{ style: {color: 'white'}}}
                                      name="query" label="Search for Recipes..." variant="outlined"
                                      value={this.state.query} onChange={this.onChange}/>
-                          <br/>
+
                           <Button variant="contained" size='large' type="submit">Search</Button>
                   </Box>
               </form>
               <ReactQueryDevtools initialIsOpen={false} />
-              <Recipe query={this.state.clippedSearch}/>
+              <Recipe query={this.state.clippedSearch} pageNum={this.state.pageNum}/>
           </div>
         );
     }
@@ -57,16 +58,20 @@ class Searcher extends Component {
 /**
  * Recipe
  * @param query -- The recipe to search for
- * @returns {JSX.Element|null} -- either a list of matched recipe ideas,  or no recipes (no results found)
+ * @param pageNum -- Recipe page number request
+ * @returns {JSX.Element|null} -- either a list of matched recipe ideas, or no recipes (no results found)
  * @constructor
  */
 
 function Recipe({query}){
 
     const client = useQueryClient()
+    const [pageNum, setPageNum] = useState(1)
 
-    const { isLoading, isError, data, error } = useQuery(['searchRecipes', query], async () => {
-        const response = await fetch("http://localhost:8000/search/" + query.replace(/ /g, '_'))
+    const { isLoading, isError, data, error } = useQuery(['searchRecipes', query, pageNum], async () => {
+        if(query === ""){
+            return {};
+        } const response = await fetch("http://localhost:8000/search/" + query.replace(/ /g, '_') + "/" + pageNum.toString())
                if (!response.ok) {
                    return {};
                }
@@ -80,12 +85,11 @@ function Recipe({query}){
 
     // console.log(query)
     // console.log(data)
-
     if(isLoading) {
         return <div><h3>Loading...</h3></div>
     } if (isError) {
         return <div><h3>Error! {error}</h3></div>
-    } if(data && data.status && data.status !== "Ok!") {
+    } if(data && data.status && data.status !== 200) {
         return <div><h3>Error! Spoonacular API returned error.</h3></div>
     } if(data && data.results) {
         if (data.totalResults === 0){
@@ -107,8 +111,14 @@ function Recipe({query}){
                             </Box>
                         </div>
                     ))}
+                    <Box sx={{display: "flex", mx: 'auto', mb: 5, p: 2, width: "75%", alignItems: "center", justifyContent: "center space-between"}}>
+                        <Pagination count={Math.floor(data.totalResults / 10) + 1} sx={{color: "white"}} color="primary" page={pageNum}
+                                    onChange={(event, page) => setPageNum(page)}/>
+                    </Box>
                 </div>)
         }
+    } else {
+        return null;
     }
 }
 
