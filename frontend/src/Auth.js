@@ -1,5 +1,6 @@
 import {useSearchParams} from "react-router-dom";
 import React from 'react';
+import {useQuery} from "react-query";
 
 export default function Auth(){
     const [searchParams, setSearchParams] = useSearchParams();
@@ -20,7 +21,7 @@ export default function Auth(){
      * - Success (return 200, with a success
      */
 
-    const { isLoading, isError, data, error } = useQuery(['authorize', code] = async () => {
+    const { isLoading, isError, data, error } = useQuery(['authorize'],async () => {
          if(searchParams.get("error") != null){
              return {"error": searchParams.get("error")}
          }

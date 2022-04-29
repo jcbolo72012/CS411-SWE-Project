@@ -89,7 +89,7 @@ def spooncular_function(functionality: str, query: str, paramls: list = None) ->
 def search(request, recipe_query, page_num=1):
     if recipe_query != "undefined":
         # for next time: use a dictionary for keys because we use that across the web
-        response = complex_search(recipe_query, [("sort", "popularity"), ("offset", (page_num - 1) * 10)])
+        response = complex_search(recipe_query, [("sort", "meta-score"), ("offset", (page_num - 1) * 10)])
         # print(response)
         if "status" in response and response["status"] == "failure":
             return JsonResponse({
