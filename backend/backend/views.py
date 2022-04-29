@@ -113,11 +113,34 @@ def information(request, info_query, page_num=0):
 def start_query(request):
     if request.method == "POST":
         body = json.loads(request.body.decode('utf8').replace("'", ""))
-        print(body)
         state = body['state']
         auth = Auth(state=body['state'])
         auth.save()
         return JsonResponse({"state": state, "client_id": os.environ.get("TODOIST_CLIENT_ID")})
+    else:
+        return JsonResponse({}, 204)
+
+def auth(request):
+    if request.method == "POST":
+        body = json.loads(request.body.decode('utf8').replace("'", ""))
+        state = body['state']
+        try:
+            r = Auth.objects.filter(state=state)
+            if r.state == state:
+                req = requests.post("https://todoist.com/oauth/access_token", data={
+                    "client_id": os.environ.get("TODOIST_CLIENT_ID"),
+                    "client_secret": os.environ.get("TODOIST_CLIENT_SECRET"),
+                    "code": body["code"]
+                })
+                info = req.json()
+                u = User(token=info["access_token"])
+                r.delete()
+                u.save()
+                return info
+            else:
+                return JsonResponse({"error": "State not found"}, 401)
+        except:
+            return JsonResponse({"error": "State not found"}, 401)
     else:
         return JsonResponse({}, 204)
 
