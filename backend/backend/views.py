@@ -4,11 +4,16 @@ import typing
 import os
 import json
 from .models import Auth, User, Review
+#import todoist
+
+
+
 
 def_complex_search_url = "https://api.spoonacular.com/recipes/complexSearch"
 def_get_info_url =  "https://api.spoonacular.com/recipes/"
 #GET https://api.spoonacular.com/recipes/{id}/information
 api_Key = os.environ.get("SPOONACULAR_API_KEY")
+
 
 
 def ping(request):
@@ -143,6 +148,36 @@ def auth(request):
             return JsonResponse({"error": "State not found"}, 401)
     else:
         return JsonResponse({}, 204)
+
+""""
+def add_item(self, content, **kwargs):
+        #function to create a new task
+        #From : https://github.com/Doist/todoist-python/blob/main/todoist/api.py
+        params = {"token": self.token, "content": content}
+        params.update(kwargs)
+        if "labels" in params:
+            params["labels"] = str(params["labels"])
+        return self._get("add_item", params=params)
+"""
+
+""""
+def create_new_task():
+    #Creating new tasks
+     body = json.loads(requests.body.decode('utf8').replace("'", ""))
+     r = requests.get("https://api.todoist.com/rest/v1/tasks") #Make a request
+     r2 = requests.post("https://api.todoist.com/rest/v1/tasks"
+     data = {"content": "Buy Milk"})
+     Authorization = {token} 
+     r.json() #response content
+
+"""
+
+     
+
+
+
+
+
 
 # For Recipe: Complex Search
 # query_example_1 = "pasta"
