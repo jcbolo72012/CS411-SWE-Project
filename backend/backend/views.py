@@ -4,16 +4,14 @@ import typing
 import os
 import json
 from .models import Auth, User, Review
-#import todoist
 
-
+# import todoist
 
 
 def_complex_search_url = "https://api.spoonacular.com/recipes/complexSearch"
-def_get_info_url =  "https://api.spoonacular.com/recipes/"
-#GET https://api.spoonacular.com/recipes/{id}/information
+def_get_info_url = "https://api.spoonacular.com/recipes/"
+# GET https://api.spoonacular.com/recipes/{id}/information
 api_Key = os.environ.get("SPOONACULAR_API_KEY")
-
 
 
 def ping(request):
@@ -58,7 +56,7 @@ def get_info(query_id: str, paramls: list = None):
 
     get_info_paramstr = parse_paramls(paramls)
 
-    get_info_url = get_info_url + query_id + "/information?"+ "&apiKey=" + api_Key + get_info_paramstr
+    get_info_url = get_info_url + query_id + "/information?" + "&apiKey=" + api_Key + get_info_paramstr
     r = requests.get(get_info_url)
     content = dict(r.json())
     # print("The following are the results from the get info: \n\n")
@@ -67,6 +65,7 @@ def get_info(query_id: str, paramls: list = None):
     # print(api_Key)
 
     return content
+
 
 def_spooncular_url = "https://api.spoonacular.com/"
 
@@ -102,7 +101,7 @@ def search(request, recipe_query, page_num=1):
             }, status=401)
         elif "total_results" in response and response["total_results"] == 0:
             return JsonResponse({
-                "Error" : "No results."
+                "Error": "No results."
             })
         else:
             return JsonResponse(response)
@@ -110,44 +109,57 @@ def search(request, recipe_query, page_num=1):
         "Error": "Empty query"
     }, status=200)  # Needs to be 200 in order to fix the initial basic query
 
+
 def information(request, info_query, page_num=0):
     if info_query != "undefined":
-        return JsonResponse(get_info(str(info_query), [("offset", page_num*10 - 10)]))
+        return JsonResponse(get_info(str(info_query), [("offset", page_num * 10 - 10)]))
     return ping(request)
+
 
 def start_query(request):
     if request.method == "POST":
+        print(request.body)
         body = json.loads(request.body.decode('utf8').replace("'", ""))
         state = body['state']
-        auth = Auth(state=body['state'])
-        auth.save()
+        auth_object = Auth(state=body['state'])
+        auth_object.save()
+        print(Auth.objects.filter(state=body['state']))
         return JsonResponse({"state": state, "client_id": os.environ.get("TODOIST_CLIENT_ID")})
     else:
-        return JsonResponse({}, 204)
+        return JsonResponse({}, status=204)
+
 
 def auth(request):
     if request.method == "POST":
         body = json.loads(request.body.decode('utf8').replace("'", ""))
         state = body['state']
+        print(state)
         try:
-            r = Auth.objects.filter(state=state)
+            r = Auth.objects.get(state=state)
+            print(r)
             if r.state == state:
                 req = requests.post("https://todoist.com/oauth/access_token", data={
                     "client_id": os.environ.get("TODOIST_CLIENT_ID"),
                     "client_secret": os.environ.get("TODOIST_CLIENT_SECRET"),
-                    "code": body["code"]
+                    "code": body["code"],
+                    "grant_type": "authorization_code"
                 })
                 info = req.json()
+                if "error" in info:
+                    return JsonResponse({"error": "Authorization failed"}, status=401)
                 u = User(token=info["access_token"])
                 r.delete()
                 u.save()
-                return info
+                return JsonResponse(info)
             else:
-                return JsonResponse({"error": "State not found"}, 401)
-        except:
-            return JsonResponse({"error": "State not found"}, 401)
+                return JsonResponse({"error": "State not found"}, status=401)
+        except Auth.DoesNotExist:
+            return JsonResponse({"error": "State not found"}, status=401)
+        except IndexError:
+            return JsonResponse({"error": "State not found"}, status=401)
     else:
-        return JsonResponse({}, 204)
+        return JsonResponse({}, status=204)
+
 
 """"
 def add_item(self, content, **kwargs):
@@ -160,24 +172,39 @@ def add_item(self, content, **kwargs):
         return self._get("add_item", params=params)
 """
 
-""""
-def create_new_task():
-    #Creating new tasks
-     body = json.loads(requests.body.decode('utf8').replace("'", ""))
-     r = requests.get("https://api.todoist.com/rest/v1/tasks") #Make a request
-     r2 = requests.post("https://api.todoist.com/rest/v1/tasks"
-     data = {"content": "Buy Milk"})
-     Authorization = {token} 
-     r.json() #response content
 
-"""
+def create_list(request):
+    if request.method != "POST":
+        return JsonResponse({"status": "POST method only."}, status=204)
 
-     
+    try:
+        body = json.loads(requests.body.decode('utf8').replace("'", ""))
+        test_token = User.objects.filter(token=body["token"]).exists()
+        if not test_token:
+            return JsonResponse({"error": "Token not found"}, status=404)
+        recipe_name = body["recipe_name"]
+        ingredients = body["ingredients"]
+        url = body["url"]
+    except KeyError:
+        return JsonResponse({"error": "Payload requires recipe name, ingredients, an access token, and URL."}, status=401)
 
+    header = {"Authorization": body["token"]}
 
+    r2 = requests.post("https://api.todoist.com/rest/v2/tasks",
+                       data={"content": recipe_name, "description": url},
+                       headers=header)
+    if r2.status_code != 200:
+        return JsonResponse({"error": "Could not add recipe task"}, status=500)
+    info = r2.json()
 
-
-
+    parent_id = info["id"]
+    for ingredient in ingredients:
+        post_subtask = requests.post("https://api.todoist.com/rest/v2/tasks",
+                                     data={"content": ingredient, "parent_id": parent_id},
+                                     headers=header)
+        if post_subtask.status_code != 200:
+            return JsonResponse({"error": "Could not add ingredient task"}, status=500)
+    return JsonResponse({"status": "Successfully added tasks!"})
 
 # For Recipe: Complex Search
 # query_example_1 = "pasta"

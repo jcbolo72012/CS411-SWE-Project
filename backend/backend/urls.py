@@ -25,5 +25,6 @@ urlpatterns = [
     path('search/<slug:recipe_query>/<int:page_num>', views.search),
     path('information/<int:info_query>', views.information),
     path('start_auth/', views.start_query),
-    path('authorize/', views.auth)
+    path('authorize/', views.auth),
+    path('add_ingredients/', views.create_list)
 ]
