@@ -10,11 +10,23 @@ export default function RecipeInfo(){
     const {recipe_id}= useParams();
     // console.log(recipe_id)
     const [menuOpen, setMenuOpen] = useState(false);
+    const [anchorEl, setAnchorEl] = useState(null);
+
     const { isLoading, isError, data, error } = useQuery(['getInfo', recipe_id], async () => {
         const response = await fetch("http://localhost:8000/information/" + recipe_id)
                return response.json()
             }, {refetchOnWindowFocus: false}
         )
+
+    const handleClick = (event) => {
+        setMenuOpen(true);
+        setAnchorEl(event.currentTarget)
+    }
+
+    const handleClose = () => {
+        setMenuOpen(false)
+        setAnchorEl(null);
+    };
 
     console.log(data)
 
@@ -24,7 +36,9 @@ export default function RecipeInfo(){
         return (<div><h3>Couldn't find recipe with that ID!</h3>
                 <Link to="/">Back to main page?</Link></div>)
     } if(data) {
-        const instructions = data.analyzedInstructions[0];
+
+        console.log(data.analyzedInstructions[0])
+
         return (<Box sx={{mx: 10, px: 5}}>
             <h1> {data.title} </h1>
             <Grid container spacing={2} sx={{mx: 'auto'}} >
@@ -47,39 +61,34 @@ export default function RecipeInfo(){
                     </ul>
                     {isAuth() ?
                         <div>
-                            <Button variant="contained" onClick={() => setMenuOpen(true)}>Add to list</Button>
-                            <Popover id={recipe_id} open={menuOpen}
-                            anchorOrigin={{vertical: 'top', horizontal: 'left'}}>
+                            <Button variant="contained" onClick={handleClick}>Add to list</Button>
+                            <Popover id={recipe_id} open={menuOpen} anchorEl={anchorEl}
+                                     anchorOrigin={{vertical: 'top', horizontal: 'left'}}
+                                     onClose={handleClose}>
                                 <RecipeForm ingredients={data.extendedIngredients}/>
                             </Popover>
                         </div> :
                         <h6>You need to be logged in to add ingredients to your to-do list.</h6>}
+                </Grid>
+                <Grid item xs={6} sx={{textAlign: "left"}}>
+                {data.analyzedInstructions ?
+                    <div>
+                        <h3>Instructions</h3>
+                        {data.analyzedInstructions[0].steps.map((step, index) => (
+                            <div>
+                                <h3>Step {step.number}</h3>
+                                <p>{step.step}</p><br/>
+                            </div>
+                        ))}
+                    </div> : <div>
+                        <h3>No instructions available!</h3>
+                    </div>}
                 </Grid>
             </Grid>
         </Box>)
     } else {
         return null;
     }
-}
-
-function Instructions({instructions}){
-    if (instructions === []){
-        return (
-            <Grid>
-                <h6>No instructions available!</h6>
-            </Grid>
-        )
-    }
-    return (
-    <Grid item xs={6} sx={{textAlign: "left"}}>
-        <h3>Instructions</h3>
-        {instructions.map((step, index) => (
-            <div>
-                <h3>Step {step.number}</h3>
-                <p>{step.step}</p><br/>
-            </div>
-        ))}
-    </Grid>)
 }
 
 function RecipeForm({ingredients, recipe_name, id}){
@@ -94,46 +103,47 @@ function RecipeForm({ingredients, recipe_name, id}){
     }
     return (
         <div>
-            <Formik initialValues={{
-                all_ingredients: false,
-                ingredients: []
-            }} onSubmit={ async (values) =>{
-                if(!values.get("all_ingredients")){
-                    ingredients = values.get("ingredients")
-                }
-                const response = await fetch("http://localhost:8000/add_ingredients/",
-                    {
-                        method: "POST",
-                        body: JSON.stringify({
-                            token: localStorage.getItem("token"),
-                            ingredients: ingredients,
-                            recipe_name: recipe_name,
-                            url: "http://localhost:3000/recipe/" + id})
-                    })
-                if(response.status === 200){
-                    setSuccess(true)
-                }}}>
-                <Form>
-                    <label>
-                        <Field type="checkbox" name="all_ingredients">
-                            Select all
-                        </Field>
-                    </label><br/>
-                    {ingredients.map((ingredient) => (
-                        <div>
-                            <label>
-                                <Field type="checkbox" name="ingredients" value={ingredient.name}/>
-                                {ingredient.name[0].toUpperCase() + ingredient.name.substring(1)}
-                            </label><br/>
-                        </div>
-                    ))}
-                    <label>
-                        <Button color="primary" variant="contained" type="submit">
-                            Add Ingredients
-                        </Button>
-                    </label>
-                </Form>
-            </Formik>
+            <p>Say hello!</p>
+            {/*<Formik initialValues={{*/}
+            {/*    all_ingredients: false,*/}
+            {/*    ingredients: []*/}
+            {/*}} onSubmit={ async (values) =>{*/}
+            {/*    if(!values.get("all_ingredients")){*/}
+            {/*        ingredients = values.get("ingredients")*/}
+            {/*    }*/}
+            {/*    const response = await fetch("http://localhost:8000/add_ingredients/",*/}
+            {/*        {*/}
+            {/*            method: "POST",*/}
+            {/*            body: JSON.stringify({*/}
+            {/*                token: localStorage.getItem("token"),*/}
+            {/*                ingredients: ingredients,*/}
+            {/*                recipe_name: recipe_name,*/}
+            {/*                url: "http://localhost:3000/recipe/" + id})*/}
+            {/*        })*/}
+            {/*    if(response.status === 200){*/}
+            {/*        setSuccess(true)*/}
+            {/*    }}}>*/}
+            {/*    <Form>*/}
+            {/*        <label>*/}
+            {/*            <Field type="checkbox" name="all_ingredients">*/}
+            {/*                Select all*/}
+            {/*            </Field>*/}
+            {/*        </label><br/>*/}
+            {/*        {ingredients.map((ingredient) => (*/}
+            {/*            <div>*/}
+            {/*                <label>*/}
+            {/*                    <Field type="checkbox" name="ingredients" value={ingredient.name}/>*/}
+            {/*                    {ingredient.name[0].toUpperCase() + ingredient.name.substring(1)}*/}
+            {/*                </label><br/>*/}
+            {/*            </div>*/}
+            {/*        ))}*/}
+            {/*        <label>*/}
+            {/*            <Button color="primary" variant="contained" type="submit">*/}
+            {/*                Add Ingredients*/}
+            {/*            </Button>*/}
+            {/*        </label>*/}
+            {/*    </Form>*/}
+            {/*</Formik>*/}
         </div>
     )
 }
