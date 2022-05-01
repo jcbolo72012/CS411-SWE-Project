@@ -82,22 +82,37 @@ function Instructions({instructions}){
     </Grid>)
 }
 
-function RecipeForm({ingredients}){
-    function handleSubmit(all_ingredients, values){
-        if(values.get("all_ingredients")){
-           // TODO: call query to add ingredients on backend
-        }
-        ingredients = values.get("ingredients")
-    }
+function RecipeForm({ingredients, recipe_name, id}){
 
+    const [success, setSuccess] = useState(false);
+    if (success) {
+       return (
+           <div>
+               <h3>Task successfully added!</h3>
+           </div>
+       )
+    }
     return (
         <div>
             <Formik initialValues={{
                 all_ingredients: false,
                 ingredients: []
-            }} onSubmit={async (values) =>{
-                handleSubmit(ingredients, values)
-            }}>
+            }} onSubmit={ async (values) =>{
+                if(!values.get("all_ingredients")){
+                    ingredients = values.get("ingredients")
+                }
+                const response = await fetch("http://localhost:8000/add_ingredients/",
+                    {
+                        method: "POST",
+                        body: JSON.stringify({
+                            token: localStorage.getItem("token"),
+                            ingredients: ingredients,
+                            recipe_name: recipe_name,
+                            url: "http://localhost:3000/recipe/" + id})
+                    })
+                if(response.status === 200){
+                    setSuccess(true)
+                }}}>
                 <Form>
                     <label>
                         <Field type="checkbox" name="all_ingredients">
@@ -112,6 +127,11 @@ function RecipeForm({ingredients}){
                             </label><br/>
                         </div>
                     ))}
+                    <label>
+                        <Button color="primary" variant="contained" type="submit">
+                            Add Ingredients
+                        </Button>
+                    </label>
                 </Form>
             </Formik>
         </div>
