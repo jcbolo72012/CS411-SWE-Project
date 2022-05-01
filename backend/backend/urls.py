@@ -26,5 +26,5 @@ urlpatterns = [
     path('information/<int:info_query>', views.information),
     path('start_auth/', views.start_query),
     path('authorize/', views.auth),
-    path('add_ingredients/', views.create_list)
+    path('create_tasks/', views.create_list)
 ]

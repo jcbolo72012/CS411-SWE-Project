@@ -1,9 +1,15 @@
 import {useSearchParams} from "react-router-dom";
-import React from 'react';
+import React, {useState} from 'react';
 import {useQuery} from "react-query";
+import {isAuth} from "./index";
 
 export default function Auth(){
     const [searchParams, setSearchParams] = useSearchParams();
+    const [reAuth, setReAuth] = useState(true);
+
+    if(isAuth()){
+        setReAuth(false);
+    }
 
     /**
      * Request: "localhost:8000/authorize" with code, secret string to verify
@@ -41,10 +47,8 @@ export default function Auth(){
              }),
              redirect: "follow"
          })
-         console.log(response)
-
          return response.json();
-     }, { refetchOnWindowFocus: false })
+     }, { refetchOnWindowFocus: false, enabled: reAuth, retry: false })
 
     if(localStorage.getItem("token")){
         return (<h3>Successfully authorized! You're now logged in!</h3>)

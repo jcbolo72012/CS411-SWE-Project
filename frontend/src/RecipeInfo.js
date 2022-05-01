@@ -65,7 +65,9 @@ export default function RecipeInfo(){
                             <Popover id={recipe_id} open={menuOpen} anchorEl={anchorEl}
                                      anchorOrigin={{vertical: 'top', horizontal: 'left'}}
                                      onClose={handleClose}>
-                                <RecipeForm ingredients={data.extendedIngredients}/>
+                                <RecipeForm ingredients={data.extendedIngredients}
+                                            recipe_name={data.title}
+                                            url={data.id}/>
                             </Popover>
                         </div> :
                         <h6>You need to be logged in to add ingredients to your to-do list.</h6>}
@@ -107,14 +109,15 @@ function RecipeForm({ingredients, recipe_name, id}){
                 method: "POST",
                 body: JSON.stringify({
                     token: token,
-                    id: id,
+                    url: window.location.href,
                     recipe_name: recipe_name,
                     ingredients: finalIng
                 })
-            })
-
+            }, {refetchOnWindowFocus: false})
         return response.json()
     }, {enabled: doSend})
+
+    console.log(data)
 
     if(isSuccess){
         return (<h3>Tasks added!</h3>)
