@@ -1,4 +1,4 @@
-import {Navigate, useSearchParams} from "react-router-dom";
+import {useSearchParams} from "react-router-dom";
 import React from 'react';
 import {useQuery} from "react-query";
 

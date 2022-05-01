@@ -93,57 +93,69 @@ export default function RecipeInfo(){
 
 function RecipeForm({ingredients, recipe_name, id}){
 
-    const [success, setSuccess] = useState(false);
-    if (success) {
-       return (
-           <div>
-               <h3>Task successfully added!</h3>
-           </div>
-       )
+    const [doSend, setDoSend] = useState(false);
+    const [finalIng, setFinalIng] = useState([]);
+
+    const allIngredientsList = [];
+    ingredients.map((ing) => (allIngredientsList.push(ing.name)))
+
+    const token = localStorage.getItem("token")
+
+    const {isLoading, isError, isSuccess, data, error} = useQuery(["addIngredients", token, id], async () => {
+        const response = await fetch("http://localhost:8000/create_tasks/",
+            {
+                method: "POST",
+                body: JSON.stringify({
+                    token: token,
+                    id: id,
+                    recipe_name: recipe_name,
+                    ingredients: finalIng
+                })
+            })
+
+        return response.json()
+    }, {enabled: doSend})
+
+    if(isSuccess){
+        return (<h3>Tasks added!</h3>)
+    } else if(isLoading){
+        return (<h3>Adding tasks...</h3>)
+    } else if(isError){
+        return (<h3>Something wrong happened.</h3>)
+    } else {
+        return (<div>
+            <h3>Add Ingredients to Todolist</h3>
+            <Formik initialValues={{
+                allIngredients: false,
+                checked: []
+            }} onSubmit={(values) => {
+                if(values.allIngredients){
+                    setFinalIng(allIngredientsList)
+                } else {
+                    setFinalIng(values.checked)
+                }
+                setDoSend(true)
+            }}>
+                {({values }) => (
+                    <Form>
+                        <label>
+                            <Field type="checkbox" name="allIngredients"/>
+                            Add All Ingredients
+                        </label>
+                        <br/><br/>
+                        {values.allIngredients === true ? <div></div> : ingredients.map((ing) => (<div>
+                            <label>
+                                <Field type="checkbox" name="checked" value={ing.name}/>
+                                {ing.name}
+                            </label><br/>
+                            </div>
+                        ))}
+                        <Button variant="contained" type="submit">Add to List</Button>
+                    </Form>
+                )}
+            </Formik>
+        </div>)
     }
-    return (
-        <div>
-            <p>Say hello!</p>
-            {/*<Formik initialValues={{*/}
-            {/*    all_ingredients: false,*/}
-            {/*    ingredients: []*/}
-            {/*}} onSubmit={ async (values) =>{*/}
-            {/*    if(!values.get("all_ingredients")){*/}
-            {/*        ingredients = values.get("ingredients")*/}
-            {/*    }*/}
-            {/*    const response = await fetch("http://localhost:8000/add_ingredients/",*/}
-            {/*        {*/}
-            {/*            method: "POST",*/}
-            {/*            body: JSON.stringify({*/}
-            {/*                token: localStorage.getItem("token"),*/}
-            {/*                ingredients: ingredients,*/}
-            {/*                recipe_name: recipe_name,*/}
-            {/*                url: "http://localhost:3000/recipe/" + id})*/}
-            {/*        })*/}
-            {/*    if(response.status === 200){*/}
-            {/*        setSuccess(true)*/}
-            {/*    }}}>*/}
-            {/*    <Form>*/}
-            {/*        <label>*/}
-            {/*            <Field type="checkbox" name="all_ingredients">*/}
-            {/*                Select all*/}
-            {/*            </Field>*/}
-            {/*        </label><br/>*/}
-            {/*        {ingredients.map((ingredient) => (*/}
-            {/*            <div>*/}
-            {/*                <label>*/}
-            {/*                    <Field type="checkbox" name="ingredients" value={ingredient.name}/>*/}
-            {/*                    {ingredient.name[0].toUpperCase() + ingredient.name.substring(1)}*/}
-            {/*                </label><br/>*/}
-            {/*            </div>*/}
-            {/*        ))}*/}
-            {/*        <label>*/}
-            {/*            <Button color="primary" variant="contained" type="submit">*/}
-            {/*                Add Ingredients*/}
-            {/*            </Button>*/}
-            {/*        </label>*/}
-            {/*    </Form>*/}
-            {/*</Formik>*/}
-        </div>
-    )
+
+
 }
