@@ -45,6 +45,9 @@ export default function RecipeInfo(){
                         <li>{ingredient.original}</li>
                         ))}
                     </ul>
+                
+                   
+                    
                     {isAuth() ?
                         <div>
                             <Button variant="contained" onClick={() => setMenuOpen(true)}>Add to list</Button>
@@ -53,7 +56,11 @@ export default function RecipeInfo(){
                                 <RecipeForm ingredients={data.extendedIngredients}/>
                             </Popover>
                         </div> :
-                        <h6>You need to be logged in to add ingredients to your to-do list.</h6>}
+                        <h6>You need to be logged in to add ingredients to your to-do list.</h6>} 
+                        
+                        <h3>Write a Review:</h3>     
+                        
+                           
                 </Grid>
             </Grid>
         </Box>)
@@ -81,6 +88,39 @@ function Instructions({instructions}){
         ))}
     </Grid>)
 }
+
+// class Reviewer extends Component {
+
+//     constructor(props) {
+//         super(props);
+//     }
+
+//     // onChange = (ev) => {
+//     //     this.setState({ query: ev.target.value })
+//     // }
+
+//     onSubmit = (e) => {
+//         e.preventDefault();
+//     }
+
+//     render(){
+//         return (
+//           <div style={{alignItems: "center"}}>
+//               <form onSubmit={this.onSubmit}>
+//                   <Box justifyContent="center" sx={{display: "flex", mx: 'auto', p: 2, width: "75%"}} autocomplete="off">
+//                           {/*<h1>Search</h1>*/}
+//                           <TextField id="outlined-basic" sx={{ width: "25%", input: {color: 'white'}}}
+//                                      InputLabelProps={{ style: {color: 'white'}}}
+//                                      name="query" label="Write a Review..." variant="outlined"/>
+
+//                           <Button variant="contained" size='large' type="submit">Search</Button>
+//                   </Box>
+//               </form>
+//               <ReactQueryDevtools initialIsOpen={false} />
+//           </div>
+//         );
+//     }
+// }
 
 function RecipeForm({ingredients}){
     function handleSubmit(all_ingredients, values){
