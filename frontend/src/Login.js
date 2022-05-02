@@ -25,13 +25,15 @@ export function Login(){
         return response.json()
     }, { refetchOnWindowFocus: false, retry: false})
 
+    console.log(data)
+
     if(isLoading){
         return <h3>Redirecting...</h3>
     } if (isError) {
         return <div><h3>Something wrong happened.</h3> <p>{error}</p></div>
     } if (data) {
         window.location.href = "https://todoist.com/oauth/authorize?client_id=" + data.client_id +
-            "&scope=data:read_write&state=" + data.state;
+            "&scope=task:add&state=" + data.state;
         return null;
 
     } else {
@@ -41,6 +43,7 @@ export function Login(){
 
 export function Logout(){
     localStorage.removeItem("token")
+    window.location.reload();
     return <Navigate to="/"/>
 }
 

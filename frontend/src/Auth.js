@@ -1,4 +1,4 @@
-import {useSearchParams} from "react-router-dom";
+import {Navigate, useSearchParams} from "react-router-dom";
 import React from 'react';
 import {useQuery} from "react-query";
 
@@ -21,7 +21,11 @@ export default function Auth(){
      * - Success (return 200, with a success
      */
 
-    const { isLoading, isError, data, error } = useQuery(['authorize'],async () => {
+    const { isLoading, isError, data, error } = useQuery(['authorize', searchParams.get("code")],async () => {
+         if(localStorage.getItem("token")){
+             return {"logged_in": true}
+         }
+
          if(searchParams.get("error") != null){
              return {"error": searchParams.get("error")}
          }
@@ -34,14 +38,20 @@ export default function Auth(){
              body: JSON.stringify({
                  code: code,
                  state: state
-             })
+             }),
+             redirect: "follow"
          })
+         console.log(response)
 
          return response.json();
-     })
+     }, { refetchOnWindowFocus: false })
+
+    if(localStorage.getItem("token")){
+        return (<h3>Successfully authorized! You're now logged in!</h3>)
+    }
 
     if(data && data === {}){
-        return <div><h3>Whoops! Something happened!</h3> <p>{data.error} </p></div>
+        return <div><h3>Whoops! Something wrong happened!</h3></div>
     } if(searchParams.get("error")) {
         return <div><h3>Whoops! Authentication failed!</h3></div>
     } if(isLoading){
@@ -50,6 +60,6 @@ export default function Auth(){
         return (<h3>Error! {error}</h3>)
     } else {
         localStorage.setItem("token", data.access_code)
-        return (<h3>Successfully authorized! You're now logged in!</h3>)
+        window.location.reload();
     }
 }
