@@ -113,7 +113,7 @@ function RecipeForm({ingredients, recipe_name, id}){
                     recipe_name: recipe_name,
                     ingredients: finalIng
                 })
-            }, {refetchOnWindowFocus: false})
+            })
         return response.json()
     }, {refetchOnWindowFocus: false, enabled: doSend})
 
