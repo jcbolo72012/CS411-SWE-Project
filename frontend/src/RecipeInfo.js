@@ -115,7 +115,7 @@ function RecipeForm({ingredients, recipe_name, id}){
                 })
             }, {refetchOnWindowFocus: false})
         return response.json()
-    }, {enabled: doSend})
+    }, {refetchOnWindowFocus: false, enabled: doSend})
 
     console.log(data)
 

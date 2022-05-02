@@ -141,8 +141,7 @@ def auth(request):
                 req = requests.post("https://todoist.com/oauth/access_token", data={
                     "client_id": os.environ.get("TODOIST_CLIENT_ID"),
                     "client_secret": os.environ.get("TODOIST_CLIENT_SECRET"),
-                    "code": body["code"],
-                    "grant_type": "authorization_code"
+                    "code": body["code"]
                 })
                 info = req.json()
                 print(info)
@@ -182,23 +181,25 @@ def create_list(request):
     try:
         print(request.body)
         body = json.loads(request.body.decode('utf8').replace("'", ""))
-        print(body["token"])
         test_token = User.objects.filter(token=body["token"]).exists()
-        print(test_token)
         if not test_token:
             return JsonResponse({"error": "Token not found"}, status=401)
         recipe_name = body["recipe_name"]
         ingredients = body["ingredients"]
         url = body["url"]
     except KeyError:
-        return JsonResponse({"error": "Payload requires recipe name, ingredients, an access token, and URL."}, status=422)
+        return JsonResponse({"error": "Payload requires recipe name, ingredients, an access token, and URL."},
+                            status=422)
 
-    header = {"Authorization": "Bearer " + body["token"], "Content-Type": "application/json"}
+    headers = {"Authorization": "Bearer " + body["token"],
+               "Content-Type": "application/json",
+               "Access-Control-Allow-Origin": "*"}
+    print(headers)
 
-    r2 = requests.post("https://api.todoist.com/rest/v1/tasks",
-                       data={"content": recipe_name, "description": url},
-                       headers=header)
-    print(r2.json())
+    r2 = requests.request("POST", "https://api.todoist.com/rest/v1/tasks",
+                          json={"content": recipe_name, "description": url},
+                          headers=headers)
+
     if r2.status_code != 200:
         return JsonResponse({"error": "Could not add recipe task"}, status=500)
     info = r2.json()
@@ -206,8 +207,8 @@ def create_list(request):
     parent_id = info["id"]
     for ingredient in ingredients:
         post_subtask = requests.post("https://api.todoist.com/rest/v1/tasks",
-                                     data={"content": ingredient, "parent_id": parent_id},
-                                     headers=header)
+                                     json={"content": ingredient, "parent_id": parent_id},
+                                     headers=headers)
         if post_subtask.status_code != 200:
             return JsonResponse({"error": "Could not add ingredient task"}, status=500)
     return JsonResponse({"status": "Successfully added tasks!"})

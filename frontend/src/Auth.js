@@ -63,7 +63,7 @@ export default function Auth(){
     } if (isError) {
         return (<h3>Error! {error}</h3>)
     } else {
-        localStorage.setItem("token", data.access_code)
+        localStorage.setItem("token", data.access_token)
         window.location.reload();
     }
 }
