@@ -115,15 +115,20 @@ def information(request, info_query, page_num=0):
         return JsonResponse(get_info(str(info_query), [("offset", page_num * 10 - 10)]))
     return ping(request)
 
-# def write_review(request):
-#     if request.method == "POST":
-#         body = json.loads(request.body.decode('utf8').replace("'", ""))
-#         state = body['state']
-#         auth = Auth(state=body['state'])
-#         auth.save()
-#         return JsonResponse({"state": state, "client_id": os.environ.get("TODOIST_CLIENT_ID")})
-#     else:
-#         return JsonResponse({}, 204)
+def get_recipes(request, recipe_id):
+    if request.method == "POST":
+        r = Review.objects.get(id=recipe_id)
+        return JsonResponse({"ids": r})
+    else:
+        return JsonResponse({}, status=204)
+
+def write_review(request):
+    if request.method == "POST":
+        review_obj = Review(username = request.username, item=request.review_id, review=request.review_text)
+        review_obj.save()
+        return JsonResponse({}, 200)
+    else:
+        return JsonResponse({}, 204)
 
 def start_query(request):
     if request.method == "POST":

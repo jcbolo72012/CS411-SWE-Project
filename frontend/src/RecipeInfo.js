@@ -59,7 +59,7 @@ export default function RecipeInfo(){
                         <h6>You need to be logged in to add ingredients to your to-do list.</h6>} 
                         
                         <h3>Write a Review:</h3>     
-                        
+
                            
                 </Grid>
             </Grid>
@@ -139,6 +139,48 @@ function RecipeForm({ingredients, recipe_name, id}){
                             Add Ingredients
                         </Button>
                     </label>
+                </Form>
+            </Formik>
+        </div>
+    )
+}
+
+
+function RecipeReviewForm({id}){
+
+    const [success, setSuccess] = useState(false);
+    if (success) {
+       return (
+           <div>
+               <h3>Review successfully posted!</h3>
+           </div>
+       )
+    }
+    return (
+        <div>
+            <Formik initialValues={{
+                review: ""
+            }} onSubmit={ async (values) =>{
+                review = values.get("review_field")
+                
+                const response = await fetch("http://localhost:8000/write_review/",
+                    {
+                        method: "POST",
+                        body: JSON.stringify({
+                            review: review,
+                            review_id: id,
+                            username: localStorage.getItem("token")})
+                    })
+                if(response.status === 200){
+                    setSuccess(true)
+                }}}>
+                <Form>
+                    <label>
+                        <Field type="text" name="review_field">
+                            Write Review
+                        </Field>
+                    </label><br/>
+        
                 </Form>
             </Formik>
         </div>
